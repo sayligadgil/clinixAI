@@ -17,8 +17,6 @@ class UserSelectionScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.local_hospital, color: Color(0xFF00629B)),
-                  const SizedBox(width: 8),
                   const Text(
                     "CliniX AI",
                     style: TextStyle(

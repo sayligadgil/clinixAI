@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'clinix_splash_screen.dart';
+import 'frontend/Patient_Interface/clinix_splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CliniXSplashScreen(),
+      home: SplashScreen(), // ← changed from CliniXSplashScreen
     );
   }
 }
