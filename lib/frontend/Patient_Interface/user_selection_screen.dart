@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'patient_intake_screen.dart';
+import '../Doctor_Interface/doctor_login.dart';
 
 class UserSelectionScreen extends StatelessWidget {
   const UserSelectionScreen({super.key});
@@ -63,12 +64,14 @@ class UserSelectionScreen extends StatelessWidget {
                       child: _buildCard(
                         context,
                         title: "Patient",
-                        description: "Input symptoms and get an AI prescription or book a doctor.",
+                        description:
+                            "Input symptoms and get an AI prescription or book a doctor.",
                         icon: Icons.person_search,
                         color: Colors.blue,
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const PatientIntakeScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const PatientIntakeScreen()),
                         ),
                       ),
                     ),
@@ -78,10 +81,16 @@ class UserSelectionScreen extends StatelessWidget {
                       child: _buildCard(
                         context,
                         title: "Doctor",
-                        description: "Manage your dashboard, alerts, and patient history.",
+                        description:
+                            "Manage your dashboard, alerts, and patient history.",
                         icon: Icons.medical_services,
                         color: Colors.deepPurple,
-                        onTap: () {}, // TODO
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DoctorLoginScreen(),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -104,22 +113,15 @@ class UserSelectionScreen extends StatelessWidget {
   }
 
   Widget _buildCard(
-      BuildContext context, {
-        required String title,
-        required String description,
-        required IconData icon,
-        required Color color,
-        required VoidCallback onTap,  // ← add this
-      }) {
+    BuildContext context, {
+    required String title,
+    required String description,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap, // ← add this
+  }) {
     return InkWell(
-      onTap: () {
-        if (title == 'Patient') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const PatientIntakeScreen()),
-          );
-        }
-      },
+      onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
