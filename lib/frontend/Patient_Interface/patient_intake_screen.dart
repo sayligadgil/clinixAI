@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'care_path_screen.dart';
 
 class PatientIntakeScreen extends StatefulWidget {
   const PatientIntakeScreen({super.key});
@@ -326,7 +327,14 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CarePathScreen(),
+                    ),
+                  );
+                },
                 icon: const Text(
                   'Complete Intake',
                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
