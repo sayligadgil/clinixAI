@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'patient_intake_screen.dart';
 
 class UserSelectionScreen extends StatelessWidget {
   const UserSelectionScreen({super.key});
@@ -57,28 +58,30 @@ class UserSelectionScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Patient Card
+                    // Patient Card
                     Expanded(
                       child: _buildCard(
                         context,
                         title: "Patient",
-                        description:
-                        "Input symptoms and get an AI prescription or book a doctor.",
+                        description: "Input symptoms and get an AI prescription or book a doctor.",
                         icon: Icons.person_search,
                         color: Colors.blue,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PatientIntakeScreen()),
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
-
-                    // Doctor Card
+// Doctor Card
                     Expanded(
                       child: _buildCard(
                         context,
                         title: "Doctor",
-                        description:
-                        "Manage your dashboard, alerts, and patient history.",
+                        description: "Manage your dashboard, alerts, and patient history.",
                         icon: Icons.medical_services,
                         color: Colors.deepPurple,
+                        onTap: () {}, // TODO
                       ),
                     ),
                   ],
@@ -106,10 +109,16 @@ class UserSelectionScreen extends StatelessWidget {
         required String description,
         required IconData icon,
         required Color color,
+        required VoidCallback onTap,  // ← add this
       }) {
     return InkWell(
       onTap: () {
-        // TODO: Navigate
+        if (title == 'Patient') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PatientIntakeScreen()),
+          );
+        }
       },
       child: Container(
         width: double.infinity,
