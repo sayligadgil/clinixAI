@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'doctor_registration_page.dart';
 
 class DoctorLoginScreen extends StatefulWidget {
   const DoctorLoginScreen({super.key});
@@ -412,7 +413,13 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
                             height: 56,
                             child: OutlinedButton(
                               onPressed: () {
-                                // Handle sign up
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PractitionerRegistrationPage(),
+                                  ),
+                                );
                               },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: const Color(0xFFE6E8ED),
