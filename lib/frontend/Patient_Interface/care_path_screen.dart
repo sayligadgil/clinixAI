@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'care_path_screen.dart';
+import 'checkout_screen.dart';
 
 class CarePathScreen extends StatelessWidget {
   final String patientName;
@@ -222,7 +222,10 @@ class CarePathScreen extends StatelessWidget {
             // ── AI Prescription Card ───────────────────────────
             GestureDetector(
               onTap: () {
-                // TODO: navigate to AI prescription screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CheckoutScreen()),
+                );
               },
               child: Container(
                 width: double.infinity,
