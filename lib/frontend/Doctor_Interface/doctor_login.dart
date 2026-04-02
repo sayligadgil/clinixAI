@@ -413,7 +413,6 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
                             height: 56,
                             child: OutlinedButton(
                               onPressed: () {
-<<<<<<< HEAD
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -421,9 +420,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
                                         const PractitionerRegistrationPage(),
                                   ),
                                 );
-=======
                                 // Handle sign up
->>>>>>> 33707ac77907f5e080b8186396c2ec9c2c2cccce
                               },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: const Color(0xFFE6E8ED),
