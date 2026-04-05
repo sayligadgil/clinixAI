@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'doctor_registration_page.dart';
+import 'doctor_dashboard.dart';
 
 class DoctorLoginScreen extends StatefulWidget {
   const DoctorLoginScreen({super.key});
@@ -341,7 +342,13 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // Handle login
+                              // Handle login logic here
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DoctorDashboard(),
+                                ),
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(

@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'doctor_dashboard.dart';
 
 class PractitionerRegistrationPage extends StatefulWidget {
   const PractitionerRegistrationPage({Key? key}) : super(key: key);
@@ -477,7 +478,19 @@ class _PractitionerRegistrationPageState
                 child: InkWell(
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
-                      // Handle registration
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Registration successful!'),
+                        ),
+                      );
+                      Future.delayed(const Duration(seconds: 1), () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DoctorDashboard(),
+                          ),
+                        );
+                      });
                     }
                   },
                   borderRadius: BorderRadius.circular(9999),
