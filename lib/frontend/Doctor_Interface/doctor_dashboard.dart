@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'doctor_schedule_screen.dart';
+import 'doctor_history.dart';
 
 class DoctorDashboard extends StatefulWidget {
   const DoctorDashboard({Key? key}) : super(key: key);
@@ -194,7 +195,11 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                 ),
               ],
             )
-          : DoctorScheduleScreen(),
+          : _selectedIndex == 1
+              ? const DoctorScheduleScreen()
+              : _selectedIndex == 2
+                  ? const PatientHistoryScreen()
+                  : const Center(child: Text("Coming Soon")),
       bottomNavigationBar: _buildBottomNavigationBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
