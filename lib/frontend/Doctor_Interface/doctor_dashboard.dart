@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'doctor_schedule_screen.dart';
 
 class DoctorDashboard extends StatefulWidget {
   const DoctorDashboard({Key? key}) : super(key: key);
@@ -23,174 +24,177 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
-      body: CustomScrollView(
-        slivers: [
-          // TopAppBar
-          SliverAppBar(
-            floating: true,
-            pinned: true,
-            backgroundColor: Colors.white.withOpacity(0.8),
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            flexibleSpace: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.8),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: const Color(0xFF191C20).withOpacity(0.05),
-                        width: 1,
+      body: _selectedIndex == 0
+          ? CustomScrollView(
+              slivers: [
+                // TopAppBar
+                SliverAppBar(
+                  floating: true,
+                  pinned: true,
+                  backgroundColor: Colors.white.withOpacity(0.8),
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
+                  flexibleSpace: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.8),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: const Color(0xFF191C20).withOpacity(0.05),
+                              width: 1,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            title: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: surfaceContainer,
-                    borderRadius: BorderRadius.circular(20),
+                  title: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: surfaceContainer,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            'https://lh3.googleusercontent.com/aida-public/AB6AXuD5x8cb_7dr9FAyveWyGOKwtr5zpetSfWNdZWCvnTGyrZmyCCMLCjlWrL9voYbkqwOGQm_VYN1bza55ZkaIQ69FdAlyCk-L-BJPLiUlAqNSzwetROQ49ubX82H6F7R4IQSHskYXqYXVdogSfiM6mfDi9xfaEP0ihYja59Pgp87l8hp5EZe12xJbtJMPaJeqSvx9QtnQVYjNLI0GiNdxPXPRJXWGWpYy4oX1oOFSzqnDyf62ibYYzEZzxLUAvh8b-nDOJrrpSkJeDAc',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(color: surfaceContainer);
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Text(
+                        'CliniX AI',
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF00629B),
+                          fontSize: 18,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuD5x8cb_7dr9FAyveWyGOKwtr5zpetSfWNdZWCvnTGyrZmyCCMLCjlWrL9voYbkqwOGQm_VYN1bza55ZkaIQ69FdAlyCk-L-BJPLiUlAqNSzwetROQ49ubX82H6F7R4IQSHskYXqYXVdogSfiM6mfDi9xfaEP0ihYja59Pgp87l8hp5EZe12xJbtJMPaJeqSvx9QtnQVYjNLI0GiNdxPXPRJXWGWpYy4oX1oOFSzqnDyf62ibYYzEZzxLUAvh8b-nDOJrrpSkJeDAc',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(color: surfaceContainer);
-                      },
+                  actions: [
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.notifications_outlined),
+                          color: Colors.grey[600],
+                          onPressed: () {},
+                        ),
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFBA1A1A),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                const Text(
-                  'CliniX AI',
-                  style: TextStyle(
-                    fontFamily: 'Manrope',
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF00629B),
-                    fontSize: 18,
-                    letterSpacing: -0.5,
+
+                // Content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 24,
+                      right: 24,
+                      top: 24,
+                      bottom: 120,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Search Section
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 40),
+                          constraints: const BoxConstraints(maxWidth: 600),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Search patients, records, symptoms...',
+                              hintStyle: TextStyle(
+                                color: const Color(0xFF717881).withOpacity(0.6),
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF717881),
+                              ),
+                              filled: true,
+                              fillColor: surfaceContainerLow,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color:
+                                      const Color(0xFF004976).withOpacity(0.2),
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Main Content Grid
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            bool isDesktop = constraints.maxWidth > 1024;
+
+                            if (isDesktop) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 8,
+                                    child: _buildUpcomingAppointments(),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  Expanded(
+                                    flex: 4,
+                                    child: _buildAlertCases(),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                children: [
+                                  _buildUpcomingAppointments(),
+                                  const SizedBox(height: 32),
+                                  _buildAlertCases(),
+                                ],
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
-            ),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications_outlined),
-                    color: Colors.grey[600],
-                    onPressed: () {},
-                  ),
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFBA1A1A),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-
-          // Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 24,
-                right: 24,
-                top: 24,
-                bottom: 120,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Search Section
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 40),
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search patients, records, symptoms...',
-                        hintStyle: TextStyle(
-                          color: const Color(0xFF717881).withOpacity(0.6),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Color(0xFF717881),
-                        ),
-                        filled: true,
-                        fillColor: surfaceContainerLow,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: const Color(0xFF004976).withOpacity(0.2),
-                            width: 2,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Main Content Grid
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      bool isDesktop = constraints.maxWidth > 1024;
-
-                      if (isDesktop) {
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 8,
-                              child: _buildUpcomingAppointments(),
-                            ),
-                            const SizedBox(width: 32),
-                            Expanded(
-                              flex: 4,
-                              child: _buildAlertCases(),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return Column(
-                          children: [
-                            _buildUpcomingAppointments(),
-                            const SizedBox(height: 32),
-                            _buildAlertCases(),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+            )
+          : DoctorScheduleScreen(),
       bottomNavigationBar: _buildBottomNavigationBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
