@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'doctor_notifs.dart';
 
 // REUSING THE COLORS FROM PREVIOUS SCREEN FOR CONSISTENCY
 class CliniColor {
@@ -59,7 +60,14 @@ class PatientHistoryScreen extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.notifications_outlined,
                     color: CliniColor.primary),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AlertDashboard(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 8),
             ],

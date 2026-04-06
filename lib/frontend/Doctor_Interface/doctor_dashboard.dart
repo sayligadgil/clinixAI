@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'doctor_schedule_screen.dart';
 import 'doctor_history.dart';
+import 'doctor_notifs.dart';
+import 'doctor_ai_log.dart';
 
 class DoctorDashboard extends StatefulWidget {
   const DoctorDashboard({Key? key}) : super(key: key);
@@ -90,7 +92,14 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined),
                           color: Colors.grey[600],
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AlertDashboard(),
+                              ),
+                            );
+                          },
                         ),
                         Positioned(
                           right: 8,
@@ -199,7 +208,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
               ? const DoctorScheduleScreen()
               : _selectedIndex == 2
                   ? const PatientHistoryScreen()
-                  : const Center(child: Text("Coming Soon")),
+                  : _selectedIndex == 3
+                      ? const PrescriptionLogPage()
+                      : const SizedBox(),
       bottomNavigationBar: _buildBottomNavigationBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},

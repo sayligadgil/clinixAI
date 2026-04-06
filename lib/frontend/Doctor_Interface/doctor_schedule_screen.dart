@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'doctor_notifs.dart';
 
 class CliniColor {
   static const primary = Color(0xFF004976);
@@ -41,7 +42,14 @@ class DoctorScheduleScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: Colors.grey),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AlertDashboard(),
+                ),
+              );
+            },
           ),
         ],
       ),
