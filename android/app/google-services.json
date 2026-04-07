@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "109177663265",
+    "project_id": "clinixai-9fd9a",
+    "storage_bucket": "clinixai-9fd9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109177663265:android:4ffce9933e935a4de11860",
+        "android_client_info": {
+          "package_name": "com.example.clinixai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC74xWZtagDUAy6QNj_ieQpB2QNvmsjcMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

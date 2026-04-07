@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'doctor_notifs.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CliniColor {
   static const primary = Color(0xFF004976);
@@ -152,53 +153,148 @@ class CalendarSection extends StatefulWidget {
 class _CalendarSectionState extends State<CalendarSection> {
   // ✅ ADD THIS HERE (STEP 2)
   int selectedIndex = 0;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay = DateTime.now();
+  String _getMonthName(int month) {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    return monthNames[month - 1];
+  }
 
-  final List<Map<String, String>> dates = [
-    {"day": "Mon", "date": "24"},
-    {"day": "Tue", "date": "25"},
-    {"day": "Wed", "date": "26"},
-    {"day": "Thu", "date": "27"},
-    {"day": "Fri", "date": "28"},
-  ];
+  List<DateTime> getCurrentWeekDates(DateTime focusedDay) {
+    final startOfWeek =
+        focusedDay.subtract(Duration(days: focusedDay.weekday - 1));
+    return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+    final weekDates = getCurrentWeekDates(_focusedDay);
+    return GestureDetector(
+      onTap: () {
+        _openFullCalendar(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${_getMonthName(_focusedDay.month)} ${_focusedDay.year}",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: () {
+                        setState(() {
+                          _focusedDay = DateTime(
+                            _focusedDay.year,
+                            _focusedDay.month - 1,
+                          );
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: () {
+                        setState(() {
+                          _focusedDay = DateTime(
+                            _focusedDay.year,
+                            _focusedDay.month + 1,
+                          );
+                        });
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(weekDates.length, (index) {
+                final item = weekDates[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedDay = item;
+                    });
+                  },
+                  child: _buildDateItem(
+                    ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index],
+                    item.day.toString(),
+                    isSelected: isSameDay(_selectedDay, item),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    );
+  }
+
+  void _openFullCalendar(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Column(
             children: [
-              const Text("October 2023",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              Row(
-                children: [
-                  IconButton(
-                      icon: const Icon(Icons.chevron_left), onPressed: () {}),
-                  IconButton(
-                      icon: const Icon(Icons.chevron_right), onPressed: () {}),
-                ],
-              )
+              const SizedBox(height: 16),
+              const Text(
+                "Select Date",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: TableCalendar(
+                  firstDay: DateTime(2020),
+                  lastDay: DateTime(2030),
+                  focusedDay: _focusedDay,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildDateItem("Mon", "24", isSelected: true),
-              _buildDateItem("Tue", "25"),
-              _buildDateItem("Wed", "26", hasDot: true),
-              _buildDateItem("Thu", "27"),
-              _buildDateItem("Fri", "28", hasDot: true),
-            ],
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
