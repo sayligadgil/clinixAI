@@ -14,8 +14,14 @@ class CliniColor {
   static const onSurfaceVariant = Color(0xFF414750);
 }
 
-class DoctorScheduleScreen extends StatelessWidget {
+class DoctorScheduleScreen extends StatefulWidget {
   const DoctorScheduleScreen({super.key});
+  @override
+  State<DoctorScheduleScreen> createState() => _DoctorScheduleScreenState();
+}
+
+class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
+  List<bool> completed = [false, false, true]; // initial states
 
   @override
   Widget build(BuildContext context) {
@@ -104,28 +110,45 @@ class DoctorScheduleScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // List of Cards
-            const AppointmentCard(
+            AppointmentCard(
               name: "Sarah Jenkins",
               time: "09:00",
               period: "AM",
               subtitle: "Chronic Hypertension Follow-up",
               icon: Icons.medical_services_outlined,
               isActive: true,
+              isCompleted: completed[0],
+              onChanged: (val) {
+                setState(() {
+                  completed[0] = val ?? false;
+                });
+              },
             ),
-            const AppointmentCard(
+            AppointmentCard(
               name: "Robert Chen",
               time: "10:30",
               period: "AM",
               subtitle: "Post-Op Respiratory Scan",
               icon: Icons.air_outlined,
+              isCompleted: completed[1],
+              onChanged: (val) {
+                setState(() {
+                  completed[1] = val ?? false;
+                });
+              },
             ),
-            const AppointmentCard(
+            AppointmentCard(
               name: "Alice Thompson",
               time: "08:15",
               period: "AM",
               subtitle: "Session Completed",
               icon: Icons.check_circle,
-              isCompleted: true,
+              isCompleted: completed[2],
+              onChanged: (val) {
+                setState(() {
+                  completed[2] = val ?? false;
+                });
+              },
             ),
             const SizedBox(height: 100), // Spacing for BottomNav
           ],
@@ -371,6 +394,7 @@ class AppointmentCard extends StatelessWidget {
   final String name, time, period, subtitle;
   final IconData icon;
   final bool isSelected, isCompleted, isActive;
+  final ValueChanged<bool?>? onChanged;
 
   const AppointmentCard({
     super.key,
@@ -382,6 +406,7 @@ class AppointmentCard extends StatelessWidget {
     this.isSelected = false,
     this.isCompleted = false,
     this.isActive = false,
+    this.onChanged,
   });
 
   @override
@@ -436,7 +461,7 @@ class AppointmentCard extends StatelessWidget {
             ),
             Checkbox(
                 value: isCompleted,
-                onChanged: (v) {},
+                onChanged: isCompleted ? null : onChanged,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4))),
             const Icon(Icons.more_vert, color: Colors.grey),
