@@ -3,8 +3,26 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'user_selection_screen.dart';
 
-class CliniXSplashScreen extends StatelessWidget {
+class CliniXSplashScreen extends StatefulWidget {
   const CliniXSplashScreen({super.key});
+
+  @override
+  State<CliniXSplashScreen> createState() => _CliniXSplashScreenState();
+}
+
+class _CliniXSplashScreenState extends State<CliniXSplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/user_selection');
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +76,7 @@ class CliniXSplashScreen extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(40),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                         child: Container(
                           width: 140, height: 140,
                           decoration: BoxDecoration(
@@ -74,7 +92,9 @@ class CliniXSplashScreen extends StatelessWidget {
                           child: Center(
                             child: Image.asset(
                               "assets/finallogo.png",
-                              width: 80, height: 80,
+                              width: 80,
+                              height: 80,
+                              cacheWidth: 160,
                             ),
                           ),
                         ),
@@ -86,30 +106,39 @@ class CliniXSplashScreen extends StatelessWidget {
                 const Text(
                   "CliniX AI",
                   style: TextStyle(
-                    fontSize: 48, fontWeight: FontWeight.w800,
-                    color: Color(0xFF004976), letterSpacing: -1,
+                    fontSize: 48,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF004976),
+                    letterSpacing: -1,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(width: 30, height: 1, color: Colors.grey.withOpacity(0.3)),
+                    Container(width: 30,
+                        height: 1,
+                        color: Colors.grey.withOpacity(0.3)),
                     const SizedBox(width: 10),
                     const Text(
                       "CLINICAL INTELLIGENCE",
                       style: TextStyle(
-                        fontSize: 12, letterSpacing: 2,
-                        fontWeight: FontWeight.w500, color: Color(0xFF414750),
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF414750),
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Container(width: 30, height: 1, color: Colors.grey.withOpacity(0.3)),
+                    Container(width: 30,
+                        height: 1,
+                        color: Colors.grey.withOpacity(0.3)),
                   ],
                 ),
                 const SizedBox(height: 60),
                 Container(
-                  width: 180, height: 6,
+                  width: 180,
+                  height: 6,
                   decoration: BoxDecoration(
                     color: const Color(0xFFECEEF3),
                     borderRadius: BorderRadius.circular(10),
@@ -140,8 +169,10 @@ class CliniXSplashScreen extends StatelessWidget {
                     Text(
                       "SECURE CLINICAL ENVIRONMENT",
                       style: TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w600,
-                        letterSpacing: 1, color: Colors.grey,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                        color: Colors.grey,
                       ),
                     )
                   ],
@@ -152,32 +183,5 @@ class CliniXSplashScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const UserSelectionScreen(),
-        ),
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const CliniXSplashScreen();
   }
 }

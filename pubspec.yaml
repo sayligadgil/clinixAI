@@ -1,4 +1,4 @@
-name: ai_healthcaretriage_hospitalmanagement_systemflutter
+name: clinixai
 description: "A new Flutter project."
 publish_to: 'none'
 
@@ -10,6 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Firebase Core and Auth
+  firebase_core: ^4.7.0
+  firebase_auth: ^6.4.0
+  cloud_firestore: ^6.3.0
+  firebase_messaging: ^16.2.0 # For the doctor alerts/FCM
+
+  # Networking & State
+  dio: ^5.4.0 # To talk to your FastAPI backend
+  provider: ^6.1.1 # To manage user state (Patient vs Doctor)
 
   cupertino_icons: ^1.0.8
   table_calendar: ^3.0.9
