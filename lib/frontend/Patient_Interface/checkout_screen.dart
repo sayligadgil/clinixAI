@@ -1,14 +1,119 @@
 import 'package:flutter/material.dart';
 import 'prescription_screen.dart';
+import 'package:clinixai/backend/app/models/consultation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clinixai/core/api_client.dart';
+import 'package:dio/dio.dart';
+import 'dart:math' as math;
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final ConsultationData consultation;
+
+  const CheckoutScreen({super.key, required this.consultation});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+  bool _isLoading = false;
+
+  Future<void> _payAndGenerate() async {
+    final consultationId = widget.consultation.consultationId;
+    if (consultationId == null || consultationId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Error: Missing consultation reference. Please re-run intake."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception("User is not signed in.");
+      }
+
+      final idToken = await user.getIdToken();
+      final patientUid = user.uid;
+
+      // 1. Verify Payment & Generate Prescription (Backend will run ML model)
+      final verifyResponse = await dioClient.post(
+        '/patient/payment/verify',
+        data: {
+          'patient_uid': patientUid,
+          'consultation_id': consultationId,
+          'razorpay_order_id': 'order_mock_${consultationId.substring(0, math.min(8, consultationId.length))}',
+          'razorpay_payment_id': 'pay_mock_${DateTime.now().millisecondsSinceEpoch}',
+          'razorpay_signature': 'mock_signature_approved',
+        },
+        options: Options(headers: {'Authorization': 'Bearer $idToken'}),
+      );
+
+      if (verifyResponse.statusCode != 200 || verifyResponse.data == null) {
+        throw Exception("Failed to verify payment with backend.");
+      }
+
+      final rxId = verifyResponse.data['prescription_id'];
+      if (rxId == null) {
+        throw Exception("No prescription ID returned from backend.");
+      }
+
+      // 2. Fetch the newly generated prescription details containing the medications
+      final rxResponse = await dioClient.get(
+        '/patient/prescription/$rxId',
+        options: Options(headers: {'Authorization': 'Bearer $idToken'}),
+      );
+
+      if (rxResponse.statusCode != 200 || rxResponse.data == null) {
+        throw Exception("Failed to fetch prescription medications from backend.");
+      }
+
+      final rxData = rxResponse.data;
+      final List<dynamic> medsJson = rxData['medications'] ?? [];
+      final parsedMedications = medsJson.map((m) => Medication.fromJson(Map<String, dynamic>.from(m))).toList();
+
+      final generatedConsultation = ConsultationData(
+        sessionId: rxData['session_id'] ?? widget.consultation.sessionId,
+        patientName: rxData['patient_name'] ?? widget.consultation.patientName,
+        hospitalName: rxData['hospital_name'] ?? widget.consultation.hospitalName,
+        diagnosis: rxData['diagnosis'] ?? widget.consultation.diagnosis,
+        confidence: (rxData['confidence_score'] ?? widget.consultation.confidence).toDouble(),
+        medications: parsedMedications,
+        consultationId: consultationId,
+        doctorName: rxData['issuing_doctor'] ?? widget.consultation.doctorName ?? "Dr. Ramesh Babu Katta",
+      );
+
+      if (!mounted) return;
+
+      // Navigate to the digital prescription screen with fully populated medications!
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PrescriptionScreen(consultation: generatedConsultation),
+        ),
+      );
+    } catch (e) {
+      debugPrint("❌ Payment/Prescription Generation Error: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Prescription Generation Failed: ${e.toString()}"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
   int _selectedPayment = 0; // 0 = card, 1 = wallet, 2 = netbanking
 
   final _cardController = TextEditingController();
@@ -27,8 +132,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
-
-      // ── AppBar ───────────────────────────────────────────────
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.85),
         elevation: 1,
@@ -51,26 +154,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ],
         ),
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: 16),
             child: CircleAvatar(
               radius: 16,
-              backgroundColor: const Color(0xFFCEE5FF),
-              child: const Icon(Icons.person, size: 18, color: Color(0xFF004976)),
+              backgroundColor: Color(0xFFCEE5FF),
+              child: Icon(Icons.person, size: 18, color: Color(0xFF004976)),
             ),
           ),
         ],
       ),
-
-      // ── Body ─────────────────────────────────────────────────
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // ── Header ─────────────────────────────────────────
             const Text(
               'Complete Your Request',
               style: TextStyle(
@@ -87,7 +186,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 24),
 
-            // ── Payment Method: Credit/Debit Card ──────────────
             GestureDetector(
               onTap: () => setState(() => _selectedPayment = 0),
               child: AnimatedContainer(
@@ -193,8 +291,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             const SizedBox(height: 12),
-
-            // ── Digital Wallets ────────────────────────────────
             _paymentOptionTile(
               index: 1,
               icon: Icons.account_balance_wallet_outlined,
@@ -202,8 +298,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               subtitle: 'Apple Pay, Google Pay, PayPal',
             ),
             const SizedBox(height: 12),
-
-            // ── Net Banking ────────────────────────────────────
             _paymentOptionTile(
               index: 2,
               icon: Icons.account_balance_outlined,
@@ -211,23 +305,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               subtitle: 'All major healthcare-partnered banks',
             ),
             const SizedBox(height: 16),
-
-            // ── HIPAA Security Badge ───────────────────────────
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFFC2E8FF).withOpacity(0.35),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.lock_outlined, color: Color(0xFF005370), size: 20),
-                  SizedBox(width: 10),
+                  const Icon(Icons.lock_outlined, color: Color(0xFF005370), size: 20),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         Text(
                           'HIPAA Compliant Processing',
                           style: TextStyle(
@@ -252,8 +344,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // ── Order Summary Card ─────────────────────────────
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -272,8 +362,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // Service line
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -294,10 +382,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             color: Color(0xFF004976), size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: const [
                             Text(
                               'AI Prescription Service',
                               style: TextStyle(
@@ -322,15 +410,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-
                   _summaryRow('Service Fee', '\$2.50'),
                   const SizedBox(height: 10),
                   _summaryRow('Clinical Verification', 'Included'),
                   const SizedBox(height: 16),
-
                   const Divider(color: Color(0xFFC0C7D1), thickness: 0.5),
                   const SizedBox(height: 16),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
@@ -350,8 +435,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-
-                  // AI Insight box
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
@@ -361,16 +444,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         color: const Color(0xFFC0C7D1).withOpacity(0.3),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.auto_awesome,
+                        const Icon(Icons.auto_awesome,
                             color: Color(0xFF006688), size: 16),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               Text(
                                 'AI INSIGHT',
                                 style: TextStyle(
@@ -395,19 +478,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // Pay Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PrescriptionScreen(),
-                          ),
-                        );
-                      },
+                      onPressed: _isLoading ? null : _payAndGenerate,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF004976),
                         foregroundColor: Colors.white,
@@ -417,18 +491,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         elevation: 4,
                         shadowColor: const Color(0xFF004976).withOpacity(0.3),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.verified_user, size: 20),
-                          SizedBox(width: 10),
-                          Text(
-                            'Pay and Generate',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 16),
-                          ),
-                        ],
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.verified_user, size: 20),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Pay and Generate',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w800, fontSize: 16),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -450,8 +533,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ],
         ),
       ),
-
-      // ── Bottom Nav ────────────────────────────────────────────
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -460,8 +541,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -484,8 +564,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
-
   Widget _paymentOptionTile({
     required int index,
     required IconData icon,
@@ -499,7 +577,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFF2F3F9) : const Color(0xFFF2F3F9),
+          color: const Color(0xFFF2F3F9),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected

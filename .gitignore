@@ -44,8 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase Service Account Key
 lib/backend/firebase_config/serviceAccountKey.json
-*.json
+
 
 

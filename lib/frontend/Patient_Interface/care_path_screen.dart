@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'checkout_screen.dart';
 import 'appointment_confirmation_screen.dart';
+import 'package:clinixai/backend/app/models/care_path.dart';
+import 'package:clinixai/backend/app/models/appointment.dart';
+import 'package:clinixai/backend/app/models/consultation.dart';
 
 class CarePathScreen extends StatelessWidget {
   final String patientName;
   final int severity;
   final List<String> selectedSymptoms;
+  final CarePathData analysisResult;
 
   const CarePathScreen({
     super.key,
     required this.patientName,
     required this.severity,
     required this.selectedSymptoms,
+    required this.analysisResult,
   });
 
   @override
@@ -40,13 +45,13 @@ class CarePathScreen extends StatelessWidget {
             ),
           ],
         ),
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: 16),
             child: CircleAvatar(
               radius: 16,
-              backgroundColor: const Color(0xFFE6E8ED),
-              child: const Icon(Icons.person, size: 18, color: Colors.grey),
+              backgroundColor: Color(0xFFE6E8ED),
+              child: Icon(Icons.person, size: 18, color: Colors.grey),
             ),
           ),
         ],
@@ -124,13 +129,13 @@ class CarePathScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
-                    children: const [
-                      Text('Likely Condition:',
+                    children: [
+                      const Text('Likely Condition:',
                           style: TextStyle(
                               color: Color(0xFF414750),
                               fontWeight: FontWeight.w500)),
-                      Text('Seasonal Allergies',
-                          style: TextStyle(
+                      Text(analysisResult.diagnosis,
+                          style: const TextStyle(
                               color: Color(0xFF004976),
                               fontWeight: FontWeight.w800,
                               fontSize: 18)),
@@ -139,14 +144,14 @@ class CarePathScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('AI Confidence',
+                    children: [
+                      const Text('AI Confidence',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                               color: Color(0xFF414750))),
-                      Text('78% Match',
-                          style: TextStyle(
+                      Text('${(analysisResult.confidence * 100).toStringAsFixed(0)}% Match',
+                          style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                               color: Color(0xFF004976))),
@@ -155,18 +160,18 @@ class CarePathScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
-                    child: const LinearProgressIndicator(
-                      value: 0.78,
+                    child: LinearProgressIndicator(
+                      value: analysisResult.confidence,
                       minHeight: 10,
-                      backgroundColor: Color(0xFFE6E8ED),
-                      valueColor: AlwaysStoppedAnimation<Color>(
+                      backgroundColor: const Color(0xFFE6E8ED),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
                           Color(0xFF004976)),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Based on your reported respiratory symptoms and ocular irritation, our clinical model indicates a high probability of allergic rhinitis triggered by seasonal environmental factors.',
-                    style: TextStyle(
+                  Text(
+                    analysisResult.analysisDetail,
+                    style: const TextStyle(
                         color: Color(0xFF414750), fontSize: 13, height: 1.6),
                   ),
                 ],
@@ -183,10 +188,25 @@ class CarePathScreen extends StatelessWidget {
 
             // ── AI Prescription Card ───────────────────────────
             GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CheckoutScreen()),
-              ),
+              onTap: () {
+                final consultationToPay = ConsultationData(
+                  sessionId: "SES-${DateTime.now().millisecondsSinceEpoch}",
+                  patientName: patientName,
+                  hospitalName: analysisResult.hospitalName,
+                  diagnosis: analysisResult.diagnosis,
+                  confidence: analysisResult.confidence,
+                  medications: [], // Initially empty, populated after payment/API call
+                  consultationId: analysisResult.consultationId,
+                  doctorName: analysisResult.doctorName ?? "Dr. Ramesh Babu Katta",
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CheckoutScreen(consultation: consultationToPay),
+                  ),
+                );
+              },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(28),
@@ -194,103 +214,18 @@ class CarePathScreen extends StatelessWidget {
                   color: const Color(0xFFC2E8FF),
                   borderRadius: BorderRadius.circular(28),
                 ),
-                child: Stack(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Positioned(
-                      top: -30,
-                      right: -30,
-                      child: Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.25),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.06),
-                                  blurRadius: 8)
-                            ],
-                          ),
-                          child: const Icon(Icons.psychology,
-                              color: Color(0xFF004976), size: 28),
-                        ),
-                        const SizedBox(height: 20),
-                        const Text('Generate AI Prescription',
-                            style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF001E2B))),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Pay for a secure, AI-powered analysis and prescription. Best for non-emergency common ailments.',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF004D67),
-                              height: 1.6),
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(Icons.payments_outlined,
-                                      size: 16, color: Color(0xFF004976)),
-                                  SizedBox(width: 6),
-                                  Text('\$24.99 USD',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 13,
-                                          color: Color(0xFF004976))),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 46,
-                              height: 46,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF004976),
-                                    Color(0xFF00629B)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: const Color(0xFF004976)
-                                          .withOpacity(0.3),
-                                      blurRadius: 10)
-                                ],
-                              ),
-                              child: const Icon(Icons.arrow_forward,
-                                  color: Colors.white, size: 20),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    const Icon(Icons.psychology, color: Color(0xFF004976), size: 28),
+                    const SizedBox(height: 20),
+                    const Text('Generate AI Prescription',
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 10),
+                    const Text('Best for non-emergency ailments.', style: TextStyle(fontSize: 14)),
+                    const SizedBox(height: 24),
+                    Text('\$${analysisResult.prescriptionPrice} USD',
+                        style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF004976))),
                   ],
                 ),
               ),
@@ -299,12 +234,29 @@ class CarePathScreen extends StatelessWidget {
 
             // ── Book Appointment Card ──────────────────────────
             GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) =>
-                    const AppointmentConfirmationScreen()),
-              ),
+              onTap: () {
+                final tempAppointment = AppointmentData(
+                  doctorName: analysisResult.doctorName ?? "Dr. Ramesh Babu Katta",
+                  specialization: analysisResult.specialization ?? "General Physician",
+                  hospitalName: analysisResult.hospitalName,
+                  hospitalLocation: "Specialist Wing",
+                  appointmentTime: "Tomorrow, 10:30 AM",
+                  rating: 4.8,
+                  reviews: 94,
+                  experienceYears: 12,
+                  matchedReason: "Clinical match for ${analysisResult.diagnosis}",
+                  doctorUid: analysisResult.doctorUid,
+                  hospitalId: analysisResult.hospitalId,
+                  consultationId: analysisResult.consultationId,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentConfirmationScreen(appointment: tempAppointment),
+                  ),
+                );
+              },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(28),
@@ -315,163 +267,44 @@ class CarePathScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.06),
-                              blurRadius: 8)
-                        ],
-                      ),
-                      child: const Icon(Icons.calendar_month_outlined,
-                          color: Color(0xFF006688), size: 28),
-                    ),
+                    const Icon(Icons.calendar_month_outlined, color: Color(0xFF006688), size: 28),
                     const SizedBox(height: 20),
                     const Text('Book an Appointment',
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF191C20))),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Schedule a visit with a specialist at your chosen hospital. Recommended for physical exams and chronic care.',
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF414750),
-                          height: 1.6),
-                    ),
+                    const Text('Schedule a visit with a specialist.', style: TextStyle(fontSize: 14)),
                     const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(999),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 6)
-                            ],
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.location_on_outlined,
-                                  size: 16, color: Color(0xFF006688)),
-                              SizedBox(width: 6),
-                              Text("Nearest: St. Mary's",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13)),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF191C20),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 10)
-                            ],
-                          ),
-                          child: const Icon(Icons.arrow_forward,
-                              color: Colors.white, size: 20),
-                        ),
-                      ],
-                    ),
+                    Text("Nearest: ${analysisResult.hospitalName}",
+                        style: const TextStyle(fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
-            // ── Quick Tip Card ─────────────────────────────────
+            // Quick Tip Card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4))
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12)],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE0E0FF),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.auto_awesome,
-                            size: 12, color: Color(0xFF343D96)),
-                        SizedBox(width: 6),
-                        Text('QUICK TIP',
-                            style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF343D96),
-                                letterSpacing: 1)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   const Text('Unsure which to choose?',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF191C20))),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                   const SizedBox(height: 10),
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                          color: Color(0xFF414750),
-                          fontSize: 13,
-                          height: 1.6),
-                      children: [
-                        TextSpan(text: 'Our AI model suggests a '),
-                        TextSpan(
-                          text: '78% match',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF004976)),
-                        ),
-                        TextSpan(
-                            text:
-                            ' for seasonal allergies. The AI Prescription path can provide immediate relief with standard over-the-counter or non-controlled medication recommendations.'),
-                      ],
-                    ),
-                  ),
+                  Text('Our AI model suggests a ${(analysisResult.confidence * 100).toStringAsFixed(0)}% match.',
+                      style: const TextStyle(fontSize: 13, color: Color(0xFF414750))),
                   const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 20,
-                    runSpacing: 10,
+                  Row(
                     children: const [
-                      _TrustBadge(
-                          icon: Icons.verified_user,
-                          label: 'HIPAA Compliant'),
-                      _TrustBadge(
-                          icon: Icons.lock,
-                          label: '256-bit Encryption'),
+                      _TrustBadge(icon: Icons.verified_user, label: 'HIPAA Compliant'),
+                      SizedBox(width: 20),
+                      _TrustBadge(icon: Icons.lock, label: '256-bit Encryption'),
                     ],
                   ),
                 ],
@@ -481,15 +314,10 @@ class CarePathScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
-        ),
+        decoration: const BoxDecoration(color: Colors.white),
         child: SafeArea(
           child: Padding(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -497,8 +325,7 @@ class CarePathScreen extends StatelessWidget {
                   icon: Icons.home,
                   label: 'Home',
                   active: true,
-                  onTap: () => Navigator.popUntil(
-                      context, (route) => route.isFirst),
+                  onTap: () => Navigator.popUntil(context, (route) => route.isFirst),
                 ),
                 _NavItem(
                   icon: Icons.settings_outlined,
@@ -515,6 +342,8 @@ class CarePathScreen extends StatelessWidget {
   }
 }
 
+// ── Helpers ──────────────────────────────────────────────────
+
 class _TrustBadge extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -523,15 +352,10 @@ class _TrustBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: const Color(0xFF004976), size: 16),
-        const SizedBox(width: 6),
-        Text(label,
-            style: const TextStyle(
-                color: Color(0xFF414750),
-                fontSize: 12,
-                fontWeight: FontWeight.w500)),
+        Icon(icon, size: 16, color: const Color(0xFF004976)),
+        const SizedBox(width: 8),
+        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
       ],
     );
   }
@@ -542,11 +366,8 @@ class _NavItem extends StatelessWidget {
   final String label;
   final bool active;
   final VoidCallback onTap;
-  const _NavItem(
-      {required this.icon,
-        required this.label,
-        required this.active,
-        required this.onTap});
+
+  const _NavItem({required this.icon, required this.label, required this.active, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -555,17 +376,9 @@ class _NavItem extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon,
-              color: active ? const Color(0xFF004976) : Colors.grey,
-              size: 24),
+          Icon(icon, color: active ? const Color(0xFF00629B) : Colors.grey),
           const SizedBox(height: 4),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11,
-                  fontWeight:
-                  active ? FontWeight.w800 : FontWeight.w500,
-                  color:
-                  active ? const Color(0xFF004976) : Colors.grey)),
+          Text(label, style: TextStyle(fontSize: 11, color: active ? const Color(0xFF00629B) : Colors.grey)),
         ],
       ),
     );

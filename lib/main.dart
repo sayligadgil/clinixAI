@@ -5,6 +5,9 @@ import 'frontend/Patient_Interface/clinix_splash_screen.dart';
 import 'frontend/Patient_Interface/user_selection_screen.dart';
 import 'frontend/Patient_Interface/patient_intake_screen.dart';
 import 'frontend/Doctor_Interface/doctor_dashboard.dart';
+
+import 'package:flutter/foundation.dart'; // Required for kDebugMode
+import 'package:cloud_firestore/cloud_firestore.dart';
 // Ensure this path matches your structure
 
 void main() async {
@@ -15,7 +18,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  // Only connect to the Firestore emulator when explicitly requested.
+  // Set USE_EMULATOR=true in your launch config / run args to enable.
+  const bool useEmulator = bool.fromEnvironment('USE_EMULATOR', defaultValue: false);
+  if (useEmulator) {
+    FirebaseFirestore.instance.useFirestoreEmulator(kIsWeb ? 'localhost' : '10.0.2.2', 8080);
+    debugPrint("🔌 Connected to Firestore Emulator");
+  }
   runApp(const MyApp());
 }
 

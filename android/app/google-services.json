@@ -12,7 +12,20 @@
           "package_name": "com.example.clinixai"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "109177663265-inr9pf95vqbrj8tc9l4c0gsdjrm385rn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.clinixai",
+            "certificate_hash": "17143a7e37042d07a1399a4f2c773b2188cbaca7"
+          }
+        },
+        {
+          "client_id": "109177663265-2pvsp2rplc83sj2pg411cmhrjnp46saf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC74xWZtagDUAy6QNj_ieQpB2QNvmsjcMQ"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109177663265-2pvsp2rplc83sj2pg411cmhrjnp46saf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "109177663265-940aagvkulvrik1c65edc811mf73sahg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.clinixai"
+              }
+            }
+          ]
         }
       }
     }

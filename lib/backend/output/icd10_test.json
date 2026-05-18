@@ -1,0 +1,461 @@
+[
+  {
+    "code": "R00",
+    "description": "Abnormalities of heart beat",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "R04",
+    "description": "Haemorrhage from respiratory passages",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "R05",
+    "description": "Cough",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "R06",
+    "description": "Abnormalities of breathing",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "R07",
+    "description": "Pain in throat and chest",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "R10",
+    "description": "Abdominal and pelvic pain",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "R11",
+    "description": "Nausea and vomiting",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "R50",
+    "description": "Fever of unknown origin",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "R51",
+    "description": "Headache",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "R55",
+    "description": "Syncope and collapse",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "R73",
+    "description": "Elevated blood glucose level",
+    "chapter": "XVIII",
+    "chapter_name": "Symptoms, signs and abnormal clinical findings",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "U07.1",
+    "description": "COVID-19, virus identified",
+    "chapter": "XXI",
+    "chapter_name": "Codes for special purposes",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "U07.2",
+    "description": "COVID-19, virus not identified",
+    "chapter": "XXI",
+    "chapter_name": "Codes for special purposes",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "G50",
+    "description": "Disorders of trigeminal nerve",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A37",
+    "description": "Whooping cough",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Pulmonology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A04",
+    "description": "Other bacterial intestinal infections",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "I42",
+    "description": "Cardiomyopathy",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "B18",
+    "description": "Chronic viral hepatitis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "B06",
+    "description": "Rubella",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "General Medicine",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "B01",
+    "description": "Varicella (chickenpox)",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "General Medicine",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A41",
+    "description": "Other septicaemia",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "S82",
+    "description": "Fracture of lower leg",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Orthopaedics",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A36",
+    "description": "Diphtheria",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "I05",
+    "description": "Rheumatic mitral valve diseases",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "I83",
+    "description": "Varicose veins of lower extremities",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Vascular Surgery",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "F50",
+    "description": "Eating disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A27",
+    "description": "Leptospirosis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "G30",
+    "description": "Alzheimer disease",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "C73",
+    "description": "Malignant neoplasm of thyroid gland",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A06",
+    "description": "Amoebiasis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "T14",
+    "description": "Injury of unspecified body region",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Emergency Medicine",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "I50",
+    "description": "Heart failure",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "A95",
+    "description": "Yellow fever",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "B02",
+    "description": "Zoster (herpes zoster)",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Dermatology",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "F32",
+    "description": "Depressive episode",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry",
+    "source_hospital": "h001"
+  },
+  {
+    "code": "J03",
+    "description": "Acute tonsillitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "N70",
+    "description": "Salpingitis and oophoritis",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Gynaecology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "K29",
+    "description": "Gastritis and duodenitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "N39",
+    "description": "Other disorders of urinary system (UTI)",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "M16",
+    "description": "Coxarthrosis (hip arthrosis)",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "K40",
+    "description": "Inguinal hernia",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "M48",
+    "description": "Other spondylopathies",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "K80",
+    "description": "Cholelithiasis (gallstones)",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "J00",
+    "description": "Acute nasopharyngitis (common cold)",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "General Medicine",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "K08",
+    "description": "Other disorders of teeth",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Dentistry",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "M17",
+    "description": "Gonarthrosis (knee arthrosis)",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "K20",
+    "description": "Oesophagitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "J90",
+    "description": "Pleural effusion",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "J20",
+    "description": "Acute bronchitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology",
+    "source_hospital": "h002"
+  },
+  {
+    "code": "E22",
+    "description": "Hyperfunction of pituitary gland",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "Q35",
+    "description": "Cleft palate",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatrics",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "E87",
+    "description": "Other disorders of fluid and acid-base balance",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Nephrology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "D69",
+    "description": "Purpura and other haemorrhagic conditions",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "D65",
+    "description": "Disseminated intravascular coagulation",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "H25",
+    "description": "Senile cataract",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "Q21",
+    "description": "Congenital malformations of cardiac septa",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatric Cardiology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "H00",
+    "description": "Hordeolum and chalazion",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "P07",
+    "description": "Disorders related to short gestation and low birth weight",
+    "chapter": "XVI",
+    "chapter_name": "Certain conditions originating in the perinatal period",
+    "specialty": "Paediatrics",
+    "source_hospital": "h003"
+  },
+  {
+    "code": "O24",
+    "description": "Diabetes mellitus in pregnancy",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics",
+    "source_hospital": "h003"
+  }
+]

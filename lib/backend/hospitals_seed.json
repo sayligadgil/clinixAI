@@ -1,0 +1,129 @@
+[
+  {
+    "id": "h001",
+    "name": "Apollo Hospitals, Jubilee Hills",
+    "short_name": "Apollo Jubilee Hills",
+    "address": "Road No 72, Opp. Bharatiya Vidya Bhavan School, Film Nagar, Jubilee Hills",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "pincode": "500033",
+    "phone": "+91-40-23607777",
+    "email": "info.jubileehills@apollohospitals.com",
+    "website": "https://www.apollohospitals.com/hospitals/apollo-health-city-jubilee-hills",
+    "latitude": 17.426,
+    "longitude": 78.4014,
+    "beds": 550,
+    "accreditation": [
+      "NABH",
+      "JCI",
+      "NABL"
+    ],
+    "wait_time_minutes": 20,
+    "emergency": true,
+    "specialties": [
+      "Cardiology",
+      "Oncology",
+      "Neurology",
+      "Neurosurgery",
+      "Infectious Disease",
+      "General Surgery",
+      "Emergency Medicine",
+      "Psychiatry",
+      "Orthopaedics",
+      "Vascular Surgery"
+    ],
+    "icd10_chapters_assigned": [
+      "I",
+      "II",
+      "V",
+      "VI",
+      "IX",
+      "XIX"
+    ],
+    "focus": "Complex surgical, oncology, cardiac, neurological & infectious cases"
+  },
+  {
+    "id": "h002",
+    "name": "KIMS-Sunshine Hospitals, Begumpet",
+    "short_name": "KIMS Begumpet",
+    "address": "1-112/86, Survey No.5/EE, Beside Andhra Bank, Near RTA Office, Kondapur",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "pincode": "500084",
+    "phone": "+91-40-44885000",
+    "email": "info@kimssunshine.co.in",
+    "website": "https://www.kimssunshine.co.in",
+    "latitude": 17.4599,
+    "longitude": 78.3674,
+    "beds": 350,
+    "accreditation": [
+      "NABH"
+    ],
+    "wait_time_minutes": 10,
+    "emergency": true,
+    "specialties": [
+      "Pulmonology",
+      "Gastroenterology",
+      "Dermatology",
+      "Orthopaedics",
+      "Rheumatology",
+      "Urology",
+      "Gynaecology",
+      "ENT",
+      "General Medicine",
+      "General Surgery",
+      "Nephrology"
+    ],
+    "icd10_chapters_assigned": [
+      "X",
+      "XI",
+      "XII",
+      "XIII",
+      "XIV"
+    ],
+    "focus": "Respiratory, digestive, skin, musculoskeletal & genitourinary conditions"
+  },
+  {
+    "id": "h003",
+    "name": "Continental Hospitals, Gachibowli",
+    "short_name": "Continental Gachibowli",
+    "address": "Plot No. 3, Road No. 2, IT & Financial District, Nanakramguda, Gachibowli",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "pincode": "500032",
+    "phone": "+91-40-67000000",
+    "email": "info@continentalhospitals.com",
+    "website": "https://www.continentalhospitals.com",
+    "latitude": 17.4146,
+    "longitude": 78.3417,
+    "beds": 400,
+    "accreditation": [
+      "NABH",
+      "NABL"
+    ],
+    "wait_time_minutes": 15,
+    "emergency": true,
+    "specialties": [
+      "Haematology",
+      "Endocrinology",
+      "Ophthalmology",
+      "ENT",
+      "Obstetrics",
+      "Paediatrics",
+      "Paediatric Cardiology",
+      "Nutrition",
+      "Cardiology",
+      "Pulmonology"
+    ],
+    "icd10_chapters_assigned": [
+      "III",
+      "IV",
+      "VII",
+      "VIII",
+      "XV",
+      "XVI",
+      "XVII"
+    ],
+    "focus": "Blood, metabolic, eye, ear, maternal, neonatal & congenital conditions"
+  }
+]

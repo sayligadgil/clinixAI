@@ -1,0 +1,344 @@
+[
+  {
+    "uid": "doc_apol_001",
+    "full_name": "Dr. Ramesh Babu Katta",
+    "specialty": "Cardiology",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MD (Cardiology)",
+      "FACC"
+    ],
+    "years_experience": 18,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 1500
+  },
+  {
+    "uid": "doc_apol_002",
+    "full_name": "Dr. Sunita Reddy",
+    "specialty": "Oncology",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MD (Oncology)",
+      "FRCR"
+    ],
+    "years_experience": 14,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 2000
+  },
+  {
+    "uid": "doc_apol_003",
+    "full_name": "Dr. Anil Kumar Sharma",
+    "specialty": "Neurology",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "DM (Neurology)"
+    ],
+    "years_experience": 12,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1800
+  },
+  {
+    "uid": "doc_apol_004",
+    "full_name": "Dr. Priyanka Venkatesh",
+    "specialty": "Infectious Disease",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MD (Infectious Disease)"
+    ],
+    "years_experience": 10,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 1200
+  },
+  {
+    "uid": "doc_apol_005",
+    "full_name": "Dr. Subrahmanyam Raju",
+    "specialty": "Neurosurgery",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MS (Neurosurgery)",
+      "MCh"
+    ],
+    "years_experience": 20,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 2500
+  },
+  {
+    "uid": "doc_apol_006",
+    "full_name": "Dr. Meena Lakshmi",
+    "specialty": "Psychiatry",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MD (Psychiatry)"
+    ],
+    "years_experience": 8,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1000
+  },
+  {
+    "uid": "doc_apol_007",
+    "full_name": "Dr. Ravi Teja Nair",
+    "specialty": "Emergency Medicine",
+    "hospital_id": "h001",
+    "hospital_name": "Apollo Hospitals, Jubilee Hills",
+    "qualifications": [
+      "MBBS",
+      "MRCEM"
+    ],
+    "years_experience": 9,
+    "rating": 4.6,
+    "available": true,
+    "consultation_fee_inr": 800
+  },
+  {
+    "uid": "doc_kims_001",
+    "full_name": "Dr. Latha Prasad",
+    "specialty": "Pulmonology",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MD (Respiratory Medicine)"
+    ],
+    "years_experience": 13,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 1200
+  },
+  {
+    "uid": "doc_kims_002",
+    "full_name": "Dr. Srikanth Naidu",
+    "specialty": "Gastroenterology",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "DM (Gastroenterology)"
+    ],
+    "years_experience": 11,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1500
+  },
+  {
+    "uid": "doc_kims_003",
+    "full_name": "Dr. Kavitha Rao",
+    "specialty": "Dermatology",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MD (Dermatology)",
+      "DVD"
+    ],
+    "years_experience": 9,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 900
+  },
+  {
+    "uid": "doc_kims_004",
+    "full_name": "Dr. Venkateswara Rao Alla",
+    "specialty": "Orthopaedics",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MS (Orthopaedics)",
+      "DNB"
+    ],
+    "years_experience": 16,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 1400
+  },
+  {
+    "uid": "doc_kims_005",
+    "full_name": "Dr. Padmaja Srinivas",
+    "specialty": "Gynaecology",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MS (OBG)",
+      "FMAS"
+    ],
+    "years_experience": 15,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 1300
+  },
+  {
+    "uid": "doc_kims_006",
+    "full_name": "Dr. Nagendra Babu",
+    "specialty": "ENT",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MS (ENT)"
+    ],
+    "years_experience": 10,
+    "rating": 4.6,
+    "available": true,
+    "consultation_fee_inr": 800
+  },
+  {
+    "uid": "doc_kims_007",
+    "full_name": "Dr. Rajani Kumari",
+    "specialty": "Nephrology",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "DM (Nephrology)"
+    ],
+    "years_experience": 12,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1600
+  },
+  {
+    "uid": "doc_kims_008",
+    "full_name": "Dr. Prasad Mukherjee",
+    "specialty": "General Surgery",
+    "hospital_id": "h002",
+    "hospital_name": "KIMS-Sunshine Hospitals, Begumpet",
+    "qualifications": [
+      "MBBS",
+      "MS (General Surgery)"
+    ],
+    "years_experience": 14,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1200
+  },
+  {
+    "uid": "doc_cont_001",
+    "full_name": "Dr. Aruna Mehta",
+    "specialty": "Endocrinology",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MD (Endocrinology)"
+    ],
+    "years_experience": 11,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 1400
+  },
+  {
+    "uid": "doc_cont_002",
+    "full_name": "Dr. Vivek Chandra",
+    "specialty": "Ophthalmology",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MS (Ophthalmology)",
+      "FICO"
+    ],
+    "years_experience": 13,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 1000
+  },
+  {
+    "uid": "doc_cont_003",
+    "full_name": "Dr. Radhika Potti",
+    "specialty": "Obstetrics",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MS (OBG)",
+      "FMAS",
+      "FICOG"
+    ],
+    "years_experience": 17,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 1800
+  },
+  {
+    "uid": "doc_cont_004",
+    "full_name": "Dr. Sridhar Babu Kondeti",
+    "specialty": "Paediatrics",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MD (Paediatrics)",
+      "DCH"
+    ],
+    "years_experience": 14,
+    "rating": 4.8,
+    "available": true,
+    "consultation_fee_inr": 1000
+  },
+  {
+    "uid": "doc_cont_005",
+    "full_name": "Dr. Usha Kiranmayi",
+    "specialty": "Haematology",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MD (Haematology)"
+    ],
+    "years_experience": 10,
+    "rating": 4.7,
+    "available": true,
+    "consultation_fee_inr": 1600
+  },
+  {
+    "uid": "doc_cont_006",
+    "full_name": "Dr. Prashanth Reddy Nanduri",
+    "specialty": "ENT",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MS (ENT)",
+      "DOHNS"
+    ],
+    "years_experience": 8,
+    "rating": 4.6,
+    "available": true,
+    "consultation_fee_inr": 900
+  },
+  {
+    "uid": "doc_cont_007",
+    "full_name": "Dr. Sailaja Venugopal",
+    "specialty": "Paediatric Cardiology",
+    "hospital_id": "h003",
+    "hospital_name": "Continental Hospitals, Gachibowli",
+    "qualifications": [
+      "MBBS",
+      "MD (Paediatrics)",
+      "DM (Paediatric Cardiology)"
+    ],
+    "years_experience": 12,
+    "rating": 4.9,
+    "available": true,
+    "consultation_fee_inr": 2000
+  }
+]
