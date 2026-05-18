@@ -1,0 +1,520 @@
+[
+  {
+    "code": "J00",
+    "description": "Acute nasopharyngitis (common cold)",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "J01",
+    "description": "Acute sinusitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J02",
+    "description": "Acute pharyngitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J03",
+    "description": "Acute tonsillitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J04",
+    "description": "Acute laryngitis and tracheitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J06",
+    "description": "Acute upper respiratory infections",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "J10",
+    "description": "Influenza due to identified influenza virus",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "J11",
+    "description": "Influenza, virus not identified",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "J18",
+    "description": "Pneumonia, unspecified",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J20",
+    "description": "Acute bronchitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J30",
+    "description": "Vasomotor and allergic rhinitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J34",
+    "description": "Other disorders of nose and nasal sinuses",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "ENT"
+  },
+  {
+    "code": "J40",
+    "description": "Bronchitis, not specified as acute or chronic",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J42",
+    "description": "Unspecified chronic bronchitis",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J44",
+    "description": "Other chronic obstructive pulmonary disease (COPD)",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J45",
+    "description": "Asthma",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J81",
+    "description": "Pulmonary oedema",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J90",
+    "description": "Pleural effusion",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "J96",
+    "description": "Respiratory failure",
+    "chapter": "X",
+    "chapter_name": "Diseases of the respiratory system",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "K01",
+    "description": "Embedded and impacted teeth",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Dentistry"
+  },
+  {
+    "code": "K08",
+    "description": "Other disorders of teeth",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Dentistry"
+  },
+  {
+    "code": "K20",
+    "description": "Oesophagitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K21",
+    "description": "Gastro-oesophageal reflux disease (GERD)",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K25",
+    "description": "Gastric ulcer",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K26",
+    "description": "Duodenal ulcer",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K29",
+    "description": "Gastritis and duodenitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K35",
+    "description": "Acute appendicitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery"
+  },
+  {
+    "code": "K37",
+    "description": "Unspecified appendicitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery"
+  },
+  {
+    "code": "K40",
+    "description": "Inguinal hernia",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery"
+  },
+  {
+    "code": "K50",
+    "description": "Crohn disease",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K51",
+    "description": "Ulcerative colitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K57",
+    "description": "Diverticular disease of intestine",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K70",
+    "description": "Alcoholic liver disease",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K72",
+    "description": "Hepatic failure",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K74",
+    "description": "Fibrosis and cirrhosis of liver",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K80",
+    "description": "Cholelithiasis (gallstones)",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "General Surgery"
+  },
+  {
+    "code": "K85",
+    "description": "Acute pancreatitis",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K86",
+    "description": "Other diseases of pancreas",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "K92",
+    "description": "Other diseases of digestive system",
+    "chapter": "XI",
+    "chapter_name": "Diseases of the digestive system",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "L01",
+    "description": "Impetigo",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L02",
+    "description": "Cutaneous abscess",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L03",
+    "description": "Cellulitis",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L10",
+    "description": "Pemphigus",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L20",
+    "description": "Atopic dermatitis",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L23",
+    "description": "Allergic contact dermatitis",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L40",
+    "description": "Psoriasis",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L50",
+    "description": "Urticaria",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L60",
+    "description": "Nail disorders",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "L70",
+    "description": "Acne",
+    "chapter": "XII",
+    "chapter_name": "Diseases of the skin",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "M00",
+    "description": "Pyogenic arthritis",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M05",
+    "description": "Seropositive rheumatoid arthritis",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Rheumatology"
+  },
+  {
+    "code": "M10",
+    "description": "Gout",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Rheumatology"
+  },
+  {
+    "code": "M15",
+    "description": "Polyarthrosis",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M16",
+    "description": "Coxarthrosis (hip arthrosis)",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M17",
+    "description": "Gonarthrosis (knee arthrosis)",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M40",
+    "description": "Kyphosis and lordosis",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M41",
+    "description": "Scoliosis",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M48",
+    "description": "Other spondylopathies",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M50",
+    "description": "Cervical disc disorders",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M54",
+    "description": "Dorsalgia (back pain)",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M75",
+    "description": "Shoulder lesions",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "M79",
+    "description": "Other soft tissue disorders",
+    "chapter": "XIII",
+    "chapter_name": "Diseases of the musculoskeletal system",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "N00",
+    "description": "Acute nephritic syndrome",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Nephrology"
+  },
+  {
+    "code": "N03",
+    "description": "Chronic nephritic syndrome",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Nephrology"
+  },
+  {
+    "code": "N10",
+    "description": "Acute pyelonephritis",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology"
+  },
+  {
+    "code": "N17",
+    "description": "Acute renal failure",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Nephrology"
+  },
+  {
+    "code": "N18",
+    "description": "Chronic renal failure",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Nephrology"
+  },
+  {
+    "code": "N20",
+    "description": "Calculus of kidney (kidney stone)",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology"
+  },
+  {
+    "code": "N30",
+    "description": "Cystitis",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology"
+  },
+  {
+    "code": "N39",
+    "description": "Other disorders of urinary system (UTI)",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology"
+  },
+  {
+    "code": "N40",
+    "description": "Hyperplasia of prostate (BPH)",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Urology"
+  },
+  {
+    "code": "N70",
+    "description": "Salpingitis and oophoritis",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Gynaecology"
+  },
+  {
+    "code": "N80",
+    "description": "Endometriosis",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Gynaecology"
+  },
+  {
+    "code": "N92",
+    "description": "Excessive, frequent and irregular menstruation",
+    "chapter": "XIV",
+    "chapter_name": "Diseases of the genitourinary system",
+    "specialty": "Gynaecology"
+  }
+]

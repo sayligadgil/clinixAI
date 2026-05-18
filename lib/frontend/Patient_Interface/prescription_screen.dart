@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'user_selection_screen.dart';
+import 'package:clinixai/backend/app/models/consultation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PrescriptionScreen extends StatelessWidget {
-  const PrescriptionScreen({super.key}); // required
+  // 🔹 DATA REQUIREMENT
+  final ConsultationData consultation;
+
+  const PrescriptionScreen({super.key, required this.consultation});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
-
-      // 🔹 APP BAR
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
@@ -31,14 +35,11 @@ class PrescriptionScreen extends StatelessWidget {
           )
         ],
       ),
-
-      // 🔹 BODY
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // TITLE
             const Text(
               "Digital Prescription",
               style: TextStyle(
@@ -48,11 +49,10 @@ class PrescriptionScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              "Session ID: #CAI-99283-24",
-              style: TextStyle(color: Colors.grey),
+            Text(
+              "Session ID: ${consultation.sessionId}", // 🔹 DYNAMIC ID
+              style: const TextStyle(color: Colors.grey),
             ),
-
             const SizedBox(height: 20),
 
             // 🔹 PATIENT + HOSPITAL CARD
@@ -65,29 +65,24 @@ class PrescriptionScreen extends StatelessWidget {
                           fontSize: 12,
                           color: Colors.grey,
                           fontWeight: FontWeight.bold)),
-
                   const SizedBox(height: 6),
-                  const Text(
-                    "Alexander J. Sterling",
-                    style: TextStyle(
+                  Text(
+                    consultation.patientName, // 🔹 DYNAMIC PATIENT
+                    style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-
                   const SizedBox(height: 4),
-                  const Text("Age: 32  |  Male  |  78kg"),
-
+                  const Text("Demographics: Auto-fetched from Profile"),
                   const SizedBox(height: 20),
-
                   const Text("Issued By",
                       style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
                           fontWeight: FontWeight.bold)),
-
                   const SizedBox(height: 6),
-                  const Text(
-                    "St. Jude Medical Center",
-                    style: TextStyle(
+                  Text(
+                    consultation.hospitalName, // 🔹 DYNAMIC HOSPITAL
+                    style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF004976)),
@@ -95,7 +90,6 @@ class PrescriptionScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 16),
 
             // 🔹 AI RESULT
@@ -106,9 +100,9 @@ class PrescriptionScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                children: const [
+                children: [
                   Row(
-                    children: [
+                    children: const [
                       Icon(Icons.psychology, color: Color(0xFF004976)),
                       SizedBox(width: 8),
                       Text(
@@ -119,53 +113,87 @@ class PrescriptionScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    "Acute Bacterial Sinusitis",
-                    style:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    consultation.diagnosis, // 🔹 DYNAMIC DIAGNOSIS
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 4),
-                  Text("Confidence: 92%"),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Confidence: ${(consultation.confidence * 100).toStringAsFixed(1)}%", // 🔹 FORMATTED CONFIDENCE
+                  ),
                 ],
               ),
             ),
+            const SizedBox(height: 16),
 
+            // 🔹 PRESCRIBING PRACTITIONER CARD (Same size/style as medications card below)
+            _card(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Prescribing Practitioner",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: const Color(0xFFCEE5FF),
+                        child: const Icon(Icons.person, size: 28, color: Color(0xFF004976)),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              consultation.doctorName ?? "Dr. Ramesh Babu Katta",
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF004976)),
+                            ),
+                            const Text(
+                              "Clinical AI Specialist",
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 16),
 
             // 🔹 MEDICATION LIST
             _card(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Suggested Medications",
-                    style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                  _medTile(
-                    title: "Amoxicillin (500mg)",
-                    desc: "Twice daily after meals for 7 days",
-                    qty: "14 Capsules",
-                  ),
-
-                  _medTile(
-                    title: "Guaifenesin (600mg)",
-                    desc: "One tablet every 12 hours",
-                    qty: "10 Tablets",
-                  ),
-
-                  _medTile(
-                    title: "Saline Nasal Spray",
-                    desc: "Use as needed",
-                    qty: "1 Unit",
-                  ),
+                  // 🔹 DYNAMIC MAPPING OF DATABASE RULES
+                  ...consultation.medications.map((med) => _medTile(
+                    title: "${med.name} (${med.dosage})",
+                    desc: "${med.frequency} for ${med.duration}",
+                    qty: med.qty,
+                  )),
                 ],
               ),
             ),
-
             const SizedBox(height: 16),
 
             // 🔹 DISCLAIMER
@@ -181,14 +209,47 @@ class PrescriptionScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
 
             // 🔹 DOWNLOAD BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () async {
+                  final rxId = consultation.consultationId;
+                  if (rxId == null || rxId.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Error: No prescription reference found to download."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  
+                  final String baseUrl = kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000';
+                  final Uri url = Uri.parse("$baseUrl/patient/prescription/$rxId/pdf");
+                  
+                  try {
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    } else {
+                      await launchUrl(url, mode: LaunchMode.platformDefault);
+                    }
+                  } catch (e) {
+                    debugPrint("Could not launch $url: $e");
+                    try {
+                      await launchUrl(url, mode: LaunchMode.inAppWebView);
+                    } catch (_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Could not open PDF download link: $e"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
                 icon: const Icon(Icons.download),
                 label: const Text("Download PDF"),
                 style: ElevatedButton.styleFrom(
@@ -200,8 +261,6 @@ class PrescriptionScreen extends StatelessWidget {
           ],
         ),
       ),
-
-      // 🔹 BOTTOM NAV (HOME ONLY)
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: const BoxDecoration(
@@ -234,7 +293,6 @@ class PrescriptionScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 CARD WIDGET
   static Widget _card(Widget child) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -247,7 +305,6 @@ class PrescriptionScreen extends StatelessWidget {
   }
 }
 
-// 🔹 MED TILE
 class _medTile extends StatelessWidget {
   final String title;
   final String desc;

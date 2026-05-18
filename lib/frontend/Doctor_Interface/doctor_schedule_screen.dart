@@ -1,6 +1,50 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'doctor_notifs.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'doctor_notifs.dart';
+
+// --- Data Models ---
+
+class Appointment {
+  final String id;
+  final String patientName;
+  final DateTime dateTime;
+  final String reason;
+  final IconData categoryIcon;
+  bool isCompleted;
+
+  Appointment({
+    required this.id,
+    required this.patientName,
+    required this.dateTime,
+    required this.reason,
+    required this.categoryIcon,
+    this.isCompleted = false,
+  });
+
+  factory Appointment.fromJson(Map<String, dynamic> json) {
+    return Appointment(
+      id: json['id'] ?? '',
+      patientName: json['patient_name'] ?? 'Unknown Patient',
+      dateTime: DateTime.parse(json['appointment_time']),
+      reason: json['reason'] ?? '',
+      categoryIcon: _getIconForCategory(json['category']),
+      isCompleted: json['status'] == 'completed',
+    );
+  }
+
+  static IconData _getIconForCategory(String? category) {
+    switch (category?.toLowerCase()) {
+      case 'respiratory': return Icons.air_outlined;
+      case 'cardiology': return Icons.favorite_outline;
+      default: return Icons.medical_services_outlined;
+    }
+  }
+}
 
 class CliniColor {
   static const primary = Color(0xFF004976);
@@ -21,138 +65,149 @@ class DoctorScheduleScreen extends StatefulWidget {
 }
 
 class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
-  List<bool> completed = [false, false, true]; // initial states
+  late Future<List<Appointment>> _appointmentsFuture;
+  DateTime _selectedDate = DateTime.now();
+
+  // Backend Config
+  final String baseUrl = kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000';
+  String token = "YOUR_BEARER_TOKEN";
+
+  @override
+  void initState() {
+    super.initState();
+    _appointmentsFuture = Future.value([]);
+    _loadTokenAndAppointments();
+  }
+
+  Future<void> _loadTokenAndAppointments() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token') ?? "YOUR_BEARER_TOKEN";
+      _appointmentsFuture = fetchAppointments(_selectedDate);
+    });
+  }
+
+  Future<List<Appointment>> fetchAppointments(DateTime date) async {
+    try {
+      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      final response = await http.get(
+        Uri.parse('$baseUrl/doctor/schedule?date=$formattedDate'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Appointment.fromJson(json)).toList();
+      } else {
+        // Fallback or throw error
+        throw Exception('Failed to load schedule');
+      }
+    } catch (e) {
+      throw Exception('Backend connection error: $e');
+    }
+  }
+
+  Future<void> _toggleStatus(Appointment appt, bool? value) async {
+    // Optimistic UI update
+    setState(() { appt.isCompleted = value ?? false; });
+
+    // Backend update
+    await http.patch(
+      Uri.parse('$baseUrl/doctor/appointments/${appt.id}'),
+      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      body: json.encode({'status': (value ?? false) ? 'completed' : 'pending'}),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CliniColor.surface,
       appBar: AppBar(
         backgroundColor: Colors.white.withOpacity(0.8),
         elevation: 0,
         title: Row(
           children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-            ),
+            const CircleAvatar(radius: 20, backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/...')),
             const SizedBox(width: 12),
-            const Text(
-              'CliniX AI',
-              style: TextStyle(
-                color: CliniColor.primaryContainer,
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
-              ),
-            ),
+            const Text('CliniX AI', style: TextStyle(color: CliniColor.primaryContainer, fontWeight: FontWeight.w900, fontSize: 20)),
           ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: Colors.grey),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AlertDashboard(),
-                ),
-              );
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AlertDashboard())),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Section
-            const Text(
-              "Today's Schedule",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: CliniColor.primary,
-              ),
-            ),
-            const Text(
-              "Monday, October 24, 2023 • 8 Appointments remaining",
-              style: TextStyle(color: CliniColor.onSurfaceVariant),
-            ),
-            const SizedBox(height: 32),
+      body: FutureBuilder<List<Appointment>>(
+        future: _appointmentsFuture,
+        builder: (context, snapshot) {
+          final appointments = snapshot.data ?? [];
+          final remainingCount = appointments.where((a) => !a.isCompleted).length;
 
-            // Bento Grid - Calendar & Brief
-            const CalendarSection(),
-            const SizedBox(height: 24),
-            const AiDailyBrief(),
-            const SizedBox(height: 32),
-
-            // Appointments List Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Appointments",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  isSameDay(_selectedDate, DateTime.now()) ? "Today's Schedule" : "Schedule for ${DateFormat('MMM dd').format(_selectedDate)}",
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: CliniColor.primary),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: CliniColor.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text("5 Items",
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(
+                  "${DateFormat('EEEE, MMMM dd, yyyy').format(_selectedDate)} • $remainingCount Appointments remaining",
+                  style: const TextStyle(color: CliniColor.onSurfaceVariant),
                 ),
+                const SizedBox(height: 32),
+
+                CalendarSection(
+                  onDateSelected: (date) {
+                    setState(() {
+                      _selectedDate = date;
+                      _appointmentsFuture = fetchAppointments(date);
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+                const AiDailyBrief(),
+                const SizedBox(height: 32),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Appointments", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(color: CliniColor.surfaceContainerHighest, borderRadius: BorderRadius.circular(20)),
+                      child: Text("${appointments.length} Items", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  const Center(child: CircularProgressIndicator())
+                else if (snapshot.hasError)
+                  const Center(child: Text("Error syncing with database"))
+                else if (appointments.isEmpty)
+                    const Center(child: Text("No appointments scheduled for this day."))
+                  else
+                    ...appointments.map((appt) => AppointmentCard(
+                      name: appt.patientName,
+                      time: DateFormat('hh:mm').format(appt.dateTime),
+                      period: DateFormat('a').format(appt.dateTime),
+                      subtitle: appt.reason,
+                      icon: appt.categoryIcon,
+                      isActive: !appt.isCompleted && isSameDay(appt.dateTime, DateTime.now()),
+                      isCompleted: appt.isCompleted,
+                      onChanged: (val) => _toggleStatus(appt, val),
+                    )),
+                const SizedBox(height: 100),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // List of Cards
-            AppointmentCard(
-              name: "Sarah Jenkins",
-              time: "09:00",
-              period: "AM",
-              subtitle: "Chronic Hypertension Follow-up",
-              icon: Icons.medical_services_outlined,
-              isActive: true,
-              isCompleted: completed[0],
-              onChanged: (val) {
-                setState(() {
-                  completed[0] = val ?? false;
-                });
-              },
-            ),
-            AppointmentCard(
-              name: "Robert Chen",
-              time: "10:30",
-              period: "AM",
-              subtitle: "Post-Op Respiratory Scan",
-              icon: Icons.air_outlined,
-              isCompleted: completed[1],
-              onChanged: (val) {
-                setState(() {
-                  completed[1] = val ?? false;
-                });
-              },
-            ),
-            AppointmentCard(
-              name: "Alice Thompson",
-              time: "08:15",
-              period: "AM",
-              subtitle: "Session Completed",
-              icon: Icons.check_circle,
-              isCompleted: completed[2],
-              onChanged: (val) {
-                setState(() {
-                  completed[2] = val ?? false;
-                });
-              },
-            ),
-            const SizedBox(height: 100), // Spacing for BottomNav
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
@@ -167,185 +222,203 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
 // --- Component Widgets ---
 
 class CalendarSection extends StatefulWidget {
-  const CalendarSection({super.key});
+  final Function(DateTime) onDateSelected;
+  const CalendarSection({super.key, required this.onDateSelected});
 
   @override
   State<CalendarSection> createState() => _CalendarSectionState();
 }
 
 class _CalendarSectionState extends State<CalendarSection> {
-  // ✅ ADD THIS HERE (STEP 2)
-  int selectedIndex = 0;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay = DateTime.now();
-  String _getMonthName(int month) {
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
-    return monthNames[month - 1];
+
+  final List<String> _months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  List<DateTime?> _getMonthDays(DateTime focusedDay) {
+    final firstDayOfMonth = DateTime(focusedDay.year, focusedDay.month, 1);
+    final weekdayOfFirst = firstDayOfMonth.weekday; // 1 = Monday, 7 = Sunday
+    final paddingCount = weekdayOfFirst - 1;
+    final daysCount = DateTime(focusedDay.year, focusedDay.month + 1, 0).day;
+
+    List<DateTime?> list = [];
+    for (int i = 0; i < paddingCount; i++) {
+      list.add(null);
+    }
+    for (int i = 1; i <= daysCount; i++) {
+      list.add(DateTime(focusedDay.year, focusedDay.month, i));
+    }
+    return list;
   }
 
-  List<DateTime> getCurrentWeekDates(DateTime focusedDay) {
-    final startOfWeek =
-        focusedDay.subtract(Duration(days: focusedDay.weekday - 1));
-    return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
+  void _previousMonth() {
+    setState(() {
+      _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final weekDates = getCurrentWeekDates(_focusedDay);
-    return GestureDetector(
-      onTap: () {
-        _openFullCalendar(context);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "${_getMonthName(_focusedDay.month)} ${_focusedDay.year}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: () {
-                        setState(() {
-                          _focusedDay = DateTime(
-                            _focusedDay.year,
-                            _focusedDay.month - 1,
-                          );
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: () {
-                        setState(() {
-                          _focusedDay = DateTime(
-                            _focusedDay.year,
-                            _focusedDay.month + 1,
-                          );
-                        });
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(weekDates.length, (index) {
-                final item = weekDates[index];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedDay = item;
-                    });
-                  },
-                  child: _buildDateItem(
-                    ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index],
-                    item.day.toString(),
-                    isSelected: isSameDay(_selectedDay, item),
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    final days = _getMonthDays(_focusedDay);
+    final currentYear = DateTime.now().year;
+    final List<int> years = List.generate(21, (index) => currentYear - 10 + index);
 
-  void _openFullCalendar(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
-      builder: (context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: Column(
+      child: Column(
+        children: [
+          // Header Row with Dropdowns and Chevrons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(height: 16),
-              const Text(
-                "Select Date",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // Chevron Left
+              IconButton(
+                icon: const Icon(Icons.chevron_left, color: CliniColor.primary),
+                onPressed: _previousMonth,
               ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: TableCalendar(
-                  firstDay: DateTime(2020),
-                  lastDay: DateTime(2030),
-                  focusedDay: _focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-
-                    Navigator.pop(context);
-                  },
-                ),
+              // Dropdowns for Month and Year
+              Row(
+                children: [
+                  // Month Dropdown
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: _focusedDay.month,
+                      icon: const Icon(Icons.arrow_drop_down, color: CliniColor.primary),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: CliniColor.primary),
+                      onChanged: (int? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _focusedDay = DateTime(_focusedDay.year, newValue, 1);
+                          });
+                        }
+                      },
+                      items: List.generate(12, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index + 1,
+                          child: Text(_months[index]),
+                        );
+                      }),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Year Dropdown
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: _focusedDay.year,
+                      icon: const Icon(Icons.arrow_drop_down, color: CliniColor.primary),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: CliniColor.primary),
+                      onChanged: (int? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _focusedDay = DateTime(newValue, _focusedDay.month, 1);
+                          });
+                        }
+                      },
+                      items: years.map((year) {
+                        return DropdownMenuItem<int>(
+                          value: year,
+                          child: Text(year.toString()),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              // Chevron Right
+              IconButton(
+                icon: const Icon(Icons.chevron_right, color: CliniColor.primary),
+                onPressed: _nextMonth,
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDateItem(String day, String date,
-      {bool isSelected = false, bool hasDot = false}) {
-    return Column(
-      children: [
-        Text(day, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-        const SizedBox(height: 8),
-        Container(
-          width: 45,
-          height: 45,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? CliniColor.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 16),
+          // Weekdays Header Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: const [
+              Expanded(child: Center(child: Text("M", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("T", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("W", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("T", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("F", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("S", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+              Expanded(child: Center(child: Text("S", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)))),
+            ],
           ),
-          child: Text(
-            date,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.black,
+          const SizedBox(height: 10),
+          // Grid View of Month Days
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: days.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1.0,
             ),
+            itemBuilder: (context, index) {
+              final day = days[index];
+              if (day == null) {
+                return const SizedBox();
+              }
+              final isSelected = isSameDay(_selectedDay, day);
+              final isToday = isSameDay(DateTime.now(), day);
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedDay = day;
+                  });
+                  widget.onDateSelected(day);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? CliniColor.primary
+                        : (isToday ? CliniColor.secondaryFixed.withOpacity(0.4) : Colors.transparent),
+                    borderRadius: BorderRadius.circular(12),
+                    border: isToday && !isSelected
+                        ? Border.all(color: CliniColor.primary, width: 1)
+                        : null,
+                  ),
+                  child: Text(
+                    day.day.toString(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: isSelected
+                          ? Colors.white
+                          : (isToday ? CliniColor.primary : Colors.black),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
-        ),
-        if (hasDot)
-          const Icon(Icons.circle, size: 6, color: CliniColor.primary),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -358,11 +431,7 @@ class AiDailyBrief extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [CliniColor.secondaryFixed, Colors.white],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: const LinearGradient(colors: [CliniColor.secondaryFixed, Colors.white], begin: Alignment.topLeft, end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -370,18 +439,12 @@ class AiDailyBrief extends StatelessWidget {
         children: [
           const Icon(Icons.psychology, color: CliniColor.primary, size: 32),
           const SizedBox(height: 12),
-          const Text("AI Daily Brief",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          const Text(
-              "3 patients flagged for 'Follow-up required' based on recent lab updates."),
+          const Text("AI Daily Brief", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const Text("3 patients flagged for 'Follow-up required' based on recent lab updates."),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.6),
-              foregroundColor: CliniColor.primary,
-              elevation: 0,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.6), foregroundColor: CliniColor.primary, elevation: 0),
             child: const Text("Review Insights"),
           )
         ],
@@ -393,20 +456,13 @@ class AiDailyBrief extends StatelessWidget {
 class AppointmentCard extends StatelessWidget {
   final String name, time, period, subtitle;
   final IconData icon;
-  final bool isSelected, isCompleted, isActive;
+  final bool isCompleted, isActive;
   final ValueChanged<bool?>? onChanged;
 
   const AppointmentCard({
-    super.key,
-    required this.name,
-    required this.time,
-    required this.period,
-    required this.subtitle,
-    required this.icon,
-    this.isSelected = false,
-    this.isCompleted = false,
-    this.isActive = false,
-    this.onChanged,
+    super.key, required this.name, required this.time, required this.period,
+    required this.subtitle, required this.icon, this.isCompleted = false,
+    this.isActive = false, this.onChanged,
   });
 
   @override
@@ -416,26 +472,15 @@ class AppointmentCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isCompleted ? Colors.white.withOpacity(0.4) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-        ),
+        decoration: BoxDecoration(color: isCompleted ? Colors.white.withOpacity(0.4) : Colors.white, borderRadius: BorderRadius.circular(24)),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? CliniColor.primary.withOpacity(0.1)
-                    : CliniColor.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(16),
-              ),
+              decoration: BoxDecoration(color: isActive ? CliniColor.primary.withOpacity(0.1) : CliniColor.surfaceContainerLow, borderRadius: BorderRadius.circular(16)),
               child: Column(
                 children: [
-                  Text(time,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isActive ? CliniColor.primary : Colors.black)),
+                  Text(time, style: TextStyle(fontWeight: FontWeight.bold, color: isActive ? CliniColor.primary : Colors.black)),
                   Text(period, style: const TextStyle(fontSize: 10)),
                 ],
               ),
@@ -445,67 +490,22 @@ class AppointmentCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
                   Row(
                     children: [
                       Icon(icon, size: 14, color: Colors.blueGrey),
                       const SizedBox(width: 4),
-                      Text(subtitle,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey)),
+                      Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                     ],
                   ),
                 ],
               ),
             ),
-            Checkbox(
-                value: isCompleted,
-                onChanged: isCompleted ? null : onChanged,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4))),
+            Checkbox(value: isCompleted, onChanged: onChanged, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
             const Icon(Icons.more_vert, color: Colors.grey),
           ],
         ),
       ),
-    );
-  }
-}
-
-class CliniBottomNav extends StatelessWidget {
-  const CliniBottomNav({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home_outlined, "Home"),
-          _navItem(Icons.calendar_month, "Schedule", isActive: true),
-          _navItem(Icons.history, "History"),
-          _navItem(Icons.psychology_outlined, "AI Log"),
-          _navItem(Icons.settings_outlined, "Settings"),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, {bool isActive = false}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: isActive ? CliniColor.primary : Colors.grey),
-        Text(label,
-            style: TextStyle(
-                fontSize: 10,
-                color: isActive ? CliniColor.primary : Colors.grey)),
-      ],
     );
   }
 }

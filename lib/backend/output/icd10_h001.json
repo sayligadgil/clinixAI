@@ -1,0 +1,772 @@
+[
+  {
+    "code": "A00",
+    "description": "Cholera",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A01",
+    "description": "Typhoid and paratyphoid fevers",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A02",
+    "description": "Other Salmonella infections",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A04",
+    "description": "Other bacterial intestinal infections",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "A06",
+    "description": "Amoebiasis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "A09",
+    "description": "Diarrhoea and gastroenteritis of presumed infectious origin",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "A15",
+    "description": "Respiratory tuberculosis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "A16",
+    "description": "Respiratory tuberculosis, not confirmed bacteriologically",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "A17",
+    "description": "Tuberculosis of nervous system",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "A20",
+    "description": "Plague",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A22",
+    "description": "Anthrax",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A27",
+    "description": "Leptospirosis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A33",
+    "description": "Tetanus neonatorum",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Paediatrics"
+  },
+  {
+    "code": "A36",
+    "description": "Diphtheria",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A37",
+    "description": "Whooping cough",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Pulmonology"
+  },
+  {
+    "code": "A38",
+    "description": "Scarlet fever",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A40",
+    "description": "Streptococcal septicaemia",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A41",
+    "description": "Other septicaemia",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A50",
+    "description": "Congenital syphilis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "A54",
+    "description": "Gonococcal infection",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Urology"
+  },
+  {
+    "code": "A60",
+    "description": "Anogenital herpesviral infection",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "A69",
+    "description": "Other spirochaetal infections",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A80",
+    "description": "Acute poliomyelitis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "A82",
+    "description": "Rabies",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "A87",
+    "description": "Viral meningitis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "A90",
+    "description": "Dengue fever",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A91",
+    "description": "Dengue haemorrhagic fever",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "A95",
+    "description": "Yellow fever",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "B01",
+    "description": "Varicella (chickenpox)",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "B02",
+    "description": "Zoster (herpes zoster)",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Dermatology"
+  },
+  {
+    "code": "B05",
+    "description": "Measles",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "B06",
+    "description": "Rubella",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "B15",
+    "description": "Acute hepatitis A",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "B16",
+    "description": "Acute hepatitis B",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "B17",
+    "description": "Other acute viral hepatitis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "B18",
+    "description": "Chronic viral hepatitis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "B20",
+    "description": "HIV disease resulting in infectious diseases",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "B50",
+    "description": "Plasmodium falciparum malaria",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "B54",
+    "description": "Unspecified malaria",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Infectious Disease"
+  },
+  {
+    "code": "B77",
+    "description": "Ascariasis",
+    "chapter": "I",
+    "chapter_name": "Certain infectious and parasitic diseases",
+    "specialty": "Gastroenterology"
+  },
+  {
+    "code": "C00",
+    "description": "Malignant neoplasm of lip",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C15",
+    "description": "Malignant neoplasm of oesophagus",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C16",
+    "description": "Malignant neoplasm of stomach",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C18",
+    "description": "Malignant neoplasm of colon",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C20",
+    "description": "Malignant neoplasm of rectum",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C22",
+    "description": "Malignant neoplasm of liver",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C25",
+    "description": "Malignant neoplasm of pancreas",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C34",
+    "description": "Malignant neoplasm of bronchus and lung",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C43",
+    "description": "Malignant melanoma of skin",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C50",
+    "description": "Malignant neoplasm of breast",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C53",
+    "description": "Malignant neoplasm of cervix uteri",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C61",
+    "description": "Malignant neoplasm of prostate",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C67",
+    "description": "Malignant neoplasm of bladder",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C71",
+    "description": "Malignant neoplasm of brain",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C73",
+    "description": "Malignant neoplasm of thyroid gland",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C90",
+    "description": "Multiple myeloma",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C91",
+    "description": "Lymphoid leukaemia",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "C92",
+    "description": "Myeloid leukaemia",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Oncology"
+  },
+  {
+    "code": "D10",
+    "description": "Benign neoplasm of mouth and pharynx",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "ENT"
+  },
+  {
+    "code": "D25",
+    "description": "Leiomyoma of uterus",
+    "chapter": "II",
+    "chapter_name": "Neoplasms",
+    "specialty": "Gynaecology"
+  },
+  {
+    "code": "F00",
+    "description": "Dementia in Alzheimer disease",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F10",
+    "description": "Mental and behavioural disorders due to alcohol",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F20",
+    "description": "Schizophrenia",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F30",
+    "description": "Manic episode",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F32",
+    "description": "Depressive episode",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F40",
+    "description": "Phobic anxiety disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F41",
+    "description": "Other anxiety disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F42",
+    "description": "Obsessive-compulsive disorder",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F43",
+    "description": "Reaction to severe stress and adjustment disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F50",
+    "description": "Eating disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F90",
+    "description": "Hyperkinetic disorders (ADHD)",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "F91",
+    "description": "Conduct disorders",
+    "chapter": "V",
+    "chapter_name": "Mental and behavioural disorders",
+    "specialty": "Psychiatry"
+  },
+  {
+    "code": "G00",
+    "description": "Bacterial meningitis",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G04",
+    "description": "Encephalitis and encephalomyelitis",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G20",
+    "description": "Parkinson disease",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G30",
+    "description": "Alzheimer disease",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G35",
+    "description": "Multiple sclerosis",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G40",
+    "description": "Epilepsy",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G43",
+    "description": "Migraine",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G44",
+    "description": "Other headache syndromes",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G45",
+    "description": "Transient cerebral ischaemic attacks",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G50",
+    "description": "Disorders of trigeminal nerve",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G54",
+    "description": "Nerve root and plexus disorders",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G61",
+    "description": "Inflammatory polyneuropathy",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "G80",
+    "description": "Cerebral palsy",
+    "chapter": "VI",
+    "chapter_name": "Diseases of the nervous system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "I00",
+    "description": "Rheumatic fever without heart involvement",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I05",
+    "description": "Rheumatic mitral valve diseases",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I10",
+    "description": "Essential hypertension",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I11",
+    "description": "Hypertensive heart disease",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I20",
+    "description": "Angina pectoris",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I21",
+    "description": "Acute myocardial infarction",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I25",
+    "description": "Chronic ischaemic heart disease",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I26",
+    "description": "Pulmonary embolism",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I27",
+    "description": "Other pulmonary heart diseases",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I42",
+    "description": "Cardiomyopathy",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I48",
+    "description": "Atrial fibrillation and flutter",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I50",
+    "description": "Heart failure",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I60",
+    "description": "Subarachnoid haemorrhage",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "I63",
+    "description": "Cerebral infarction",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "I64",
+    "description": "Stroke, not specified as haemorrhage or infarction",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Neurology"
+  },
+  {
+    "code": "I70",
+    "description": "Atherosclerosis",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "I83",
+    "description": "Varicose veins of lower extremities",
+    "chapter": "IX",
+    "chapter_name": "Diseases of the circulatory system",
+    "specialty": "Vascular Surgery"
+  },
+  {
+    "code": "S06",
+    "description": "Intracranial injury",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Neurosurgery"
+  },
+  {
+    "code": "S22",
+    "description": "Fracture of rib, sternum and thoracic spine",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "S52",
+    "description": "Fracture of forearm",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "S72",
+    "description": "Fracture of femur",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "S82",
+    "description": "Fracture of lower leg",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "T14",
+    "description": "Injury of unspecified body region",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Emergency Medicine"
+  },
+  {
+    "code": "T39",
+    "description": "Poisoning by non-opioid analgesics",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Emergency Medicine"
+  },
+  {
+    "code": "T78",
+    "description": "Adverse effects, not elsewhere classified (Anaphylaxis)",
+    "chapter": "XIX",
+    "chapter_name": "Injury, poisoning and external causes",
+    "specialty": "Emergency Medicine"
+  }
+]

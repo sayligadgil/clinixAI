@@ -1,0 +1,359 @@
+[
+  {
+    "code": "D50",
+    "description": "Iron deficiency anaemia",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "D51",
+    "description": "Vitamin B12 deficiency anaemia",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "D56",
+    "description": "Thalassaemia",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology"
+  },
+  {
+    "code": "D57",
+    "description": "Sickle-cell disorders",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology"
+  },
+  {
+    "code": "D64",
+    "description": "Other anaemias",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "D65",
+    "description": "Disseminated intravascular coagulation",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology"
+  },
+  {
+    "code": "D69",
+    "description": "Purpura and other haemorrhagic conditions",
+    "chapter": "III",
+    "chapter_name": "Diseases of the blood",
+    "specialty": "Haematology"
+  },
+  {
+    "code": "E01",
+    "description": "Iodine-deficiency thyroid disorders",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E03",
+    "description": "Other hypothyroidism",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E05",
+    "description": "Thyrotoxicosis",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E10",
+    "description": "Insulin-dependent diabetes mellitus",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E11",
+    "description": "Non-insulin-dependent diabetes mellitus",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E14",
+    "description": "Unspecified diabetes mellitus",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E22",
+    "description": "Hyperfunction of pituitary gland",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E27",
+    "description": "Other disorders of adrenal gland",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E40",
+    "description": "Kwashiorkor",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Nutrition"
+  },
+  {
+    "code": "E46",
+    "description": "Unspecified protein-energy malnutrition",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Nutrition"
+  },
+  {
+    "code": "E50",
+    "description": "Vitamin A deficiency",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "E55",
+    "description": "Vitamin D deficiency",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "General Medicine"
+  },
+  {
+    "code": "E66",
+    "description": "Obesity",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Endocrinology"
+  },
+  {
+    "code": "E78",
+    "description": "Disorders of lipoprotein metabolism",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Cardiology"
+  },
+  {
+    "code": "E87",
+    "description": "Other disorders of fluid and acid-base balance",
+    "chapter": "IV",
+    "chapter_name": "Endocrine, nutritional and metabolic diseases",
+    "specialty": "Nephrology"
+  },
+  {
+    "code": "H00",
+    "description": "Hordeolum and chalazion",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H10",
+    "description": "Conjunctivitis",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H25",
+    "description": "Senile cataract",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H26",
+    "description": "Other cataract",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H35",
+    "description": "Other retinal disorders",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H40",
+    "description": "Glaucoma",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H52",
+    "description": "Disorders of refraction and accommodation",
+    "chapter": "VII",
+    "chapter_name": "Diseases of the eye",
+    "specialty": "Ophthalmology"
+  },
+  {
+    "code": "H60",
+    "description": "Otitis externa",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "H65",
+    "description": "Nonsuppurative otitis media",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "H66",
+    "description": "Suppurative and unspecified otitis media",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "H81",
+    "description": "Disorders of vestibular function",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "H90",
+    "description": "Conductive and sensorineural hearing loss",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "H91",
+    "description": "Other hearing loss",
+    "chapter": "VIII",
+    "chapter_name": "Diseases of the ear",
+    "specialty": "ENT"
+  },
+  {
+    "code": "O10",
+    "description": "Pre-existing hypertension complicating pregnancy",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O14",
+    "description": "Gestational hypertension (pre-eclampsia)",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O20",
+    "description": "Haemorrhage in early pregnancy",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O24",
+    "description": "Diabetes mellitus in pregnancy",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O42",
+    "description": "Premature rupture of membranes",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O60",
+    "description": "Preterm labour",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O80",
+    "description": "Single spontaneous delivery",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "O82",
+    "description": "Single delivery by caesarean section",
+    "chapter": "XV",
+    "chapter_name": "Pregnancy, childbirth and the puerperium",
+    "specialty": "Obstetrics"
+  },
+  {
+    "code": "P07",
+    "description": "Disorders related to short gestation and low birth weight",
+    "chapter": "XVI",
+    "chapter_name": "Certain conditions originating in the perinatal period",
+    "specialty": "Paediatrics"
+  },
+  {
+    "code": "P22",
+    "description": "Respiratory distress of newborn",
+    "chapter": "XVI",
+    "chapter_name": "Certain conditions originating in the perinatal period",
+    "specialty": "Paediatrics"
+  },
+  {
+    "code": "P36",
+    "description": "Bacterial sepsis of newborn",
+    "chapter": "XVI",
+    "chapter_name": "Certain conditions originating in the perinatal period",
+    "specialty": "Paediatrics"
+  },
+  {
+    "code": "Q20",
+    "description": "Congenital malformations of cardiac chambers",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatric Cardiology"
+  },
+  {
+    "code": "Q21",
+    "description": "Congenital malformations of cardiac septa",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatric Cardiology"
+  },
+  {
+    "code": "Q35",
+    "description": "Cleft palate",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatrics"
+  },
+  {
+    "code": "Q65",
+    "description": "Congenital deformities of hip",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Orthopaedics"
+  },
+  {
+    "code": "Q90",
+    "description": "Down syndrome",
+    "chapter": "XVII",
+    "chapter_name": "Congenital malformations",
+    "specialty": "Paediatrics"
+  }
+]

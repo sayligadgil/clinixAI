@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Is the user logged in via Firebase Auth?
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper: Does the user own this specific record?
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Helper: Is the user a registered doctor in our database?
+    function isDoctor() {
+      return isSignedIn() && exists(/databases/$(database)/documents/doctors/$(request.auth.uid));
+    }
+
+    // --- DOCTORS ---
+    match /doctors/{doctorId} {
+      // Login/Authentication is handled automatically by Firebase Auth via Email/Password.
+      // Anyone can read general doctor info to find a provider.
+      allow read: if true;
+
+      // New doctors must provide these exact 4 registration fields upon creation
+      allow create: if isSignedIn() &&
+                    request.resource.data.keys().hasAll(['name', 'hospital_affiliation', 'specialization', 'license']);
+
+      allow update: if isOwner(doctorId);
+    }
+
+    // --- PATIENTS ---
+    match /patients/{patientId} {
+      // Patients are signed in with the intake form itself.
+      // Reading/Writing data requires ownership over the user profile.
+      allow read, write: if isOwner(patientId);
+
+      // Enforce the required intake parameters upon creation
+      allow create: if isSignedIn() &&
+                    isOwner(patientId) &&
+                    request.resource.data.keys().hasAll(['name', 'age', 'preferred_hospital']) &&
+                    (request.resource.data.keys().hasAny(['symptom_description', 'symptom_selection']));
+    }
+
+    // --- CONSULTATIONS & ALERTS ---
+    match /consultations/{consultationId} {
+      allow create: if isSignedIn();
+      allow read: if isOwner(resource.data.patient_uid) ||
+                  (isDoctor() && get(/databases/$(database)/documents/doctors/$(request.auth.uid)).data.hospital_affiliation == resource.data.hospital_affiliation);
+    }
+
+    match /alerts/{alertId} {
+      allow read, update: if isDoctor() &&
+                          get(/databases/$(database)/documents/doctors/$(request.auth.uid)).data.hospital_affiliation == resource.data.hospital_affiliation;
+    }
+
+    // --- SYSTEM MEDICAL KNOWLEDGE & SYMPTOMS ---
+    // Publicly readable so patients can browse symptoms/mappings during intake
+    match /common_symptoms/{symptomId} { allow read: if true; }
+    match /specialization_mappings/{id} { allow read: if true; }
+    match /prescription_rules/{id} { allow read: if true; }
+    match /symptom_medications/{id} { allow read: if true; }
+    match /drug_interactions/{id} { allow read: if true; }
+    match /risk_patterns/{id} { allow read: if true; }
+    match /vital_thresholds/{id} { allow read: if true; }
+
+    // --- HOSPITALS & ICD-10 ---
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      match /icd10_codes/{codeId} { allow read: if true; }
+    }
+  }
+}
