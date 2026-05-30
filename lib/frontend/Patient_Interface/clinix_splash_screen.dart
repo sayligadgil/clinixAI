@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'user_selection_screen.dart';
+// import 'user_selection_screen.dart'; // removed unused import
 
 class CliniXSplashScreen extends StatefulWidget {
   const CliniXSplashScreen({super.key});
@@ -44,7 +44,7 @@ class _CliniXSplashScreenState extends State<CliniXSplashScreen> {
             child: Container(
               width: 300, height: 300,
               decoration: BoxDecoration(
-                color: const Color(0xFFC2E8FF).withOpacity(0.2),
+                color: const Color(0xFFC2E8FF).withAlpha((0.2 * 255).round()),
                 shape: BoxShape.circle,
               ),
             ),
@@ -54,7 +54,7 @@ class _CliniXSplashScreenState extends State<CliniXSplashScreen> {
             child: Container(
               width: 400, height: 400,
               decoration: BoxDecoration(
-                color: const Color(0xFFCEE5FF).withOpacity(0.3),
+                color: const Color(0xFFCEE5FF).withAlpha((0.3 * 255).round()),
                 shape: BoxShape.circle,
               ),
             ),
@@ -69,7 +69,7 @@ class _CliniXSplashScreenState extends State<CliniXSplashScreen> {
                     Container(
                       width: 180, height: 180,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF004976).withOpacity(0.05),
+                        color: const Color(0xFF004976).withAlpha((0.05 * 255).round()),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -80,7 +80,7 @@ class _CliniXSplashScreenState extends State<CliniXSplashScreen> {
                         child: Container(
                           width: 140, height: 140,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withAlpha((0.7 * 255).round()),
                             borderRadius: BorderRadius.circular(40),
                             boxShadow: [
                               BoxShadow(

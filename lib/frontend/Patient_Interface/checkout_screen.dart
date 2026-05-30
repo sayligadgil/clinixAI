@@ -85,7 +85,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         confidence: (rxData['confidence_score'] ?? widget.consultation.confidence).toDouble(),
         medications: parsedMedications,
         consultationId: consultationId,
-        doctorName: rxData['issuing_doctor'] ?? widget.consultation.doctorName ?? "Dr. Ramesh Babu Katta",
+        doctorName: rxData['issuing_doctor'] ?? widget.consultation.doctorName,
+        prescriptionId: rxId, // Pass real prescription ID for PDF download
       );
 
       if (!mounted) return;
@@ -105,6 +106,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             content: Text("Prescription Generation Failed: ${e.toString()}"),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 5),
+          ),
+        );
+        // Fallback navigation using existing consultation data
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PrescriptionScreen(consultation: widget.consultation),
           ),
         );
       }
@@ -400,7 +408,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                       const Text(
-                        '\$49.00',
+                        '₹49.00',
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF004976),
@@ -410,7 +418,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _summaryRow('Service Fee', '\$2.50'),
+                  _summaryRow('Service Fee', '₹2.50'),
                   const SizedBox(height: 10),
                   _summaryRow('Clinical Verification', 'Included'),
                   const SizedBox(height: 16),
@@ -425,7 +433,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             fontWeight: FontWeight.w800, fontSize: 16),
                       ),
                       Text(
-                        '\$51.50',
+                        '₹51.50',
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 24,

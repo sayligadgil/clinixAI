@@ -18,7 +18,7 @@ All patient-facing endpoints:
 from __future__ import annotations
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.responses import Response
@@ -36,9 +36,10 @@ from app.models.schemas import (
 )
 from app.services.ai_service import run_ai_analysis, create_prescription
 from app.services.payment_service import create_order, verify_payment, confirm_payment
-from .auth import require_patient, CurrentUser, get_optional_user
+from .auth import require_patient, CurrentUser, get_optional_user, get_current_user_any
 from firebase_admin import auth as firebase_auth
 from app.utils.pdf_generator import generate_prescription_pdf
+from google.api_core.exceptions import FailedPrecondition
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/patient", tags=["Patient"])
@@ -164,23 +165,36 @@ async def create_payment_order(req: PaymentOrderRequest,
 
 @router.post("/payment/verify")
 async def verify_and_generate(req: PaymentVerifyRequest,
-                               current_user: CurrentUser = Depends(require_patient)):
+                               current_user: CurrentUser = Depends(get_current_user_any)):
     """
     Verifies Razorpay signature → confirms payment → generates prescription.
     """
+    logger.debug(f"Payment verify called with user: {current_user.uid}, req.patient_uid: {req.patient_uid}")
+    logger.debug(f"Request headers: {req}")
     if current_user.uid != req.patient_uid:
+        logger.warning(f"UID mismatch: auth {current_user.uid} vs payload {req.patient_uid}")
         raise HTTPException(status_code=403, detail="UID mismatch.")
 
     if not verify_payment(req.razorpay_order_id, req.razorpay_payment_id, req.razorpay_signature):
+        logger.error("Payment signature verification failed.")
         raise HTTPException(status_code=400, detail="Payment signature verification failed.")
+
+    db = get_firestore()
+    c_ref = db.collection(COLLECTION["consultations"]).document(req.consultation_id)
+    c_snap = c_ref.get()
+    if c_snap.exists:
+        c = c_snap.to_dict()
+        if c.get("patient_uid") != current_user.uid:
+            c_ref.update({"patient_uid": current_user.uid})
 
     payment_id = confirm_payment(req.razorpay_order_id, req.razorpay_payment_id)
     prescription = await create_prescription(req.consultation_id, payment_id=payment_id)
 
+    logger.info(f"Prescription generated: {prescription.id} for patient {current_user.uid}")
     return {
         "success": True,
         "prescription_id": prescription.id,
-        "session_id": prescription.session_id,
+        "session_id": prescription.consultation_id,
         "diagnosis": prescription.diagnosis,
         "medications_count": len(prescription.medications),
     }
@@ -297,9 +311,21 @@ async def book_appointment(req: AppointmentRequest,
 async def list_appointments(uid: str, current_user: CurrentUser = Depends(require_patient)):
     if current_user.uid != uid:
         raise HTTPException(status_code=403, detail="Access denied.")
-    return query_collection(COLLECTION["appointments"],
-                            filters=[("patient_uid", "==", uid)],
-                            order_by="created_at", limit=20)
+    try:
+        return query_collection(
+            COLLECTION["appointments"],
+            filters=[("patient_uid", "==", uid)],
+            order_by="created_at",
+            limit=20,
+        )
+    except FailedPrecondition:
+        # Missing composite index – fallback without ordering
+        logging.warning("Firestore index missing for patient appointments query; proceeding without order_by.")
+        return query_collection(
+            COLLECTION["appointments"],
+            filters=[("patient_uid", "==", uid)],
+            limit=20,
+        )
 
 
 # ── Hospitals ─────────────────────────────────────────────────────────────────

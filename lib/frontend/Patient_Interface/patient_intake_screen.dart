@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+// import removed as unused
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -84,6 +84,22 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
         'Fatigue': false,
         'Headache': false,
         'Sore Throat': false,
+        'Nausea': false,
+        'Vomiting': false,
+        'Chest Pain': false,
+        'Shortness of Breath': false,
+        'Abdominal Pain': false,
+        // Additional symptoms from backend
+        'Cough': false,
+        'Pain': false,
+        'Abnormal Heartbeat': false,
+        'Respiratory Hemorrhage': false,
+        'Abnormal Breathing': false,
+        'Throat and Chest Pain': false,
+        'Abdominal and Pelvic Pain': false,
+        'Nausea and Vomiting': false,
+        'Syncope': false,
+        'Elevated Blood Glucose': false,
       };
       _isLoadingHospitals = false;
     });
@@ -196,7 +212,7 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.85),
+        backgroundColor: Colors.white.withAlpha((0.85 * 255).round()),
         elevation: 1,
         automaticallyImplyLeading: false,
         title: const Text('CliniX AI',
@@ -359,7 +375,7 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
                           margin: const EdgeInsets.only(bottom: 8),
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: selected ? const Color(0xFF004976).withOpacity(0.05) : Colors.transparent,
+                            color: selected ? const Color(0xFF004976).withAlpha((0.05 * 255).round()) : Colors.transparent,
                             borderRadius: BorderRadius.circular(10),
                             border: selected ? const Border(left: BorderSide(color: Color(0xFF004976), width: 4)) : null,
                           ),
@@ -371,7 +387,7 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }) ,
                   ],
                 ),
               ),
@@ -430,7 +446,7 @@ class _PatientIntakeScreenState extends State<PatientIntakeScreen> {
   Widget _card({required Widget child}) => Container(
       width: double.infinity, padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4))]),
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.04 * 255).round()), blurRadius: 12, offset: const Offset(0, 4))]),
       child: child
   );
 

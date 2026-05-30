@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'user_selection_screen.dart';
 import 'package:clinixai/backend/app/models/consultation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clinixai/core/api_client.dart';
+import 'package:dio/dio.dart';
+import 'dart:typed_data';
+import 'dart:html' as html show Blob, AnchorElement, Url;
 
 class PrescriptionScreen extends StatelessWidget {
   // 🔹 DATA REQUIREMENT
@@ -151,7 +155,7 @@ class PrescriptionScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              consultation.doctorName ?? "Dr. Ramesh Babu Katta",
+                              consultation.doctorName ?? "Unknown Doctor",
                               style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -176,22 +180,25 @@ class PrescriptionScreen extends StatelessWidget {
 
             // 🔹 MEDICATION LIST
             _card(
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Suggested Medications",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.all(0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Suggested Medications",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
 
-                  // 🔹 DYNAMIC MAPPING OF DATABASE RULES
-                  ...consultation.medications.map((med) => _medTile(
-                    title: "${med.name} (${med.dosage})",
-                    desc: "${med.frequency} for ${med.duration}",
-                    qty: med.qty,
-                  )),
-                ],
+                    // 🔹 DYNAMIC MAPPING OF DATABASE RULES
+                    ...consultation.medications.map((med) => _MedTile(
+                      title: "${med.name} (${med.dosage})",
+                      desc: "${med.frequency} for ${med.duration}",
+                      qty: med.qty,
+                    )),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -216,7 +223,7 @@ class PrescriptionScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  final rxId = consultation.consultationId;
+                  final rxId = consultation.prescriptionId;
                   if (rxId == null || rxId.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -226,28 +233,52 @@ class PrescriptionScreen extends StatelessWidget {
                     );
                     return;
                   }
-                  
-                  final String baseUrl = kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000';
-                  final Uri url = Uri.parse("$baseUrl/patient/prescription/$rxId/pdf");
-                  
+
+                  // Show downloading indicator
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("⏳ Preparing PDF download..."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+
                   try {
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    } else {
-                      await launchUrl(url, mode: LaunchMode.platformDefault);
-                    }
-                  } catch (e) {
-                    debugPrint("Could not launch $url: $e");
-                    try {
-                      await launchUrl(url, mode: LaunchMode.inAppWebView);
-                    } catch (_) {
+                    final user = FirebaseAuth.instance.currentUser;
+                    final idToken = user != null ? await user.getIdToken() : null;
+
+                    final response = await dioClient.get(
+                      '/patient/prescription/$rxId/pdf',
+                      options: Options(
+                        responseType: ResponseType.bytes,
+                        headers: idToken != null
+                            ? {'Authorization': 'Bearer $idToken'}
+                            : null,
+                      ),
+                    );
+
+                    if (kIsWeb) {
+                      final bytes = Uint8List.fromList(response.data);
+                      final blob = html.Blob([bytes], 'application/pdf');
+                      final url = html.Url.createObjectUrlFromBlob(blob);
+                      final anchor = html.AnchorElement(href: url)
+                        ..setAttribute('download', 'clinix_prescription_${rxId.substring(0, 8)}.pdf')
+                        ..click();
+                      html.Url.revokeObjectUrl(url);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Could not open PDF download link: $e"),
-                          backgroundColor: Colors.red,
+                        const SnackBar(
+                          content: Text("✅ PDF downloaded successfully!"),
+                          backgroundColor: Color(0xFF004976),
                         ),
                       );
                     }
+                  } catch (e) {
+                    debugPrint("PDF download error: $e");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("❌ PDF download failed: $e"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
                   }
                 },
                 icon: const Icon(Icons.download),
@@ -305,12 +336,12 @@ class PrescriptionScreen extends StatelessWidget {
   }
 }
 
-class _medTile extends StatelessWidget {
+class _MedTile extends StatelessWidget {
   final String title;
   final String desc;
   final String qty;
 
-  const _medTile({
+  const _MedTile({
     required this.title,
     required this.desc,
     required this.qty,

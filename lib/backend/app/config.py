@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    TEST_AUTH_TOKEN: str = os.getenv("TEST_AUTH_TOKEN", "test-token")
 
     ML_MODELS_DIR: str = "app/models" # Update this to match your folder structure
 

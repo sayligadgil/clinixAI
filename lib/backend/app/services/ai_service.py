@@ -87,6 +87,20 @@ async def run_ai_analysis(intake: SymptomIntakeRequest) -> AIAnalysisResult:
     icd10_code        = clf_result["icd10_code"]
     recommended_spec  = clf_result["recommended_specialist"]
 
+    # -----------------------------------------------------------------
+    # Sanity checks to avoid illogical low‑confidence predictions
+    # -----------------------------------------------------------------
+    # 1. Prevent COVID‑19 being suggested for very few mild symptoms
+    if predicted_illness.lower().find('covid') != -1 and len(symptom_names) <= 2:
+        logger.warning('Low confidence COVID‑19 prediction on minimal symptoms – demoting confidence')
+        confidence_score = 0.0
+    # 2. Ensure severe cases (severity >= 8) do not get low confidence that
+    #    would silently be treated as "OK". Force alert if confidence is low.
+    if overall_severity >= 8 and confidence_score < 0.5:
+        logger.warning('Severe case with low confidence – forcing alert')
+        confidence_score = max(confidence_score, 0.5)
+    # -----------------------------------------------------------------
+
     logger.info(
         f"Classified: {predicted_illness} "
         f"(conf={confidence_score:.2f}, patient={intake.patient_uid})"
@@ -110,17 +124,25 @@ async def run_ai_analysis(intake: SymptomIntakeRequest) -> AIAnalysisResult:
 
     # 4. Doctor Matching ───────────────────────────────────────────────────────
     matched_doctor: Optional[dict] = None
-    if requires_alert or overall_severity >= 7:
-        matcher = _get_matcher()
-        risk_level = anomaly_res.risk_level.value if anomaly_res else "LOW"
-        matches = matcher.match_doctors(
-            hospital_id=intake.hospital_id,
-            icd10_code=icd10_code,
-            patient_age=intake.age,
-            risk_level=risk_level
-        )
-        if matches:
-            matched_doctor = firebase_helper.get_doctor_by_uid(matches[0].doctor_uid)
+    matcher = _get_matcher()
+    risk_level = anomaly_res.risk_level.value if anomaly_res else "LOW"
+    
+    # Map frontend hospital ID to seed hospital ID
+    id_mapping = {
+        "apollo_jh": "h001",
+        "kims_begumpet": "h002",
+        "continental_gachibowli": "h003"
+    }
+    mapped_hospital_id = id_mapping.get(intake.hospital_id, intake.hospital_id)
+    
+    matches = matcher.match_doctors(
+        hospital_id=mapped_hospital_id,
+        icd10_code=icd10_code,
+        patient_age=intake.age,
+        risk_level=risk_level
+    )
+    if matches:
+        matched_doctor = firebase_helper.get_doctor_by_uid(matches[0].doctor_uid)
 
     # 5. Save consultation to Firestore ───────────────────────────────────────
     consultation_id = str(uuid.uuid4())
@@ -182,7 +204,10 @@ async def run_ai_analysis(intake: SymptomIntakeRequest) -> AIAnalysisResult:
         top_predictions=top_predictions,
         requires_doctor_alert=requires_alert,
         recommended_specialist=recommended_spec,
+        recommended_spec=recommended_spec,
         matched_doctor=matched_doctor,
+        matched_doctor_name=matched_doctor.get("full_name") if matched_doctor else None,
+        matched_doctor_uid=matched_doctor.get("id") if matched_doctor else None,
         analysis_notes=analysis_notes,
         status=status,
         diagnosis=predicted_illness,
@@ -222,10 +247,11 @@ async def create_prescription(
     if c.get("requires_alert"):
         risk_lvl = RiskLevel.HIGH if c.get("severity", 5) >= 8 else RiskLevel.MEDIUM
 
-    # Map symptoms dynamically
-    symptoms_list = []
-    if c.get("symptoms"):
-        symptoms_list = [s.get("name") for s in c.get("symptoms", []) if s.get("name")]
+    # Map symptoms dynamically — stored as selected_symptoms (list of strings)
+    symptoms_list = c.get("selected_symptoms", []) or []
+    # If it's a list of dicts (legacy format), extract names
+    if symptoms_list and isinstance(symptoms_list[0], dict):
+        symptoms_list = [s.get("name", "") for s in symptoms_list if s.get("name")]
 
     # Generate medications via AI / rule-based (synchronously)
     rx_output = generate_prescription(
@@ -247,8 +273,29 @@ async def create_prescription(
         issued_at=now,
     )
 
-    # Save to Firestore
-    rx_dict = prescription.model_dump(mode="json")
+    # Fetch doctor name from matched doctor
+    doctor_name = "AI System"
+    doctor_uid = c.get("matched_doctor_uid")
+    if doctor_uid:
+        doctor_doc = db.collection(COLLECTION["doctors"]).document(doctor_uid).get()
+        if doctor_doc.exists:
+            doctor_name = doctor_doc.to_dict().get("full_name", "AI System")
+
+    # Build rich prescription dict for Firestore
+    rx_dict = {
+        **prescription.model_dump(mode="json"),
+        "patient_name": c.get("full_name", "Patient"),
+        "patient_age": c.get("age", 0),
+        "hospital_name": hospital_name,
+        "session_id": session_id,
+        "issuing_doctor": doctor_name,
+        "matched_doctor_uid": doctor_uid,
+        "icd10_code": c.get("icd10_code"),
+        "confidence_score": c.get("confidence_score", 0.0),
+        "general_advice": rx_output.dietary_advice or [],
+        "follow_up_in_days": rx_output.follow_up_days or 7,
+        "emergency_warning": rx_output.warning_signs[0] if rx_output.warning_signs else None,
+    }
     set_doc(COLLECTION["prescriptions"], prescription.id, rx_dict)
 
     # Update consultation status
@@ -257,6 +304,27 @@ async def create_prescription(
         "prescription_id": prescription.id,
         "updated_at": now.isoformat(),
     })
+
+    # Save AI log to doctor dashboard (visible in AI Logs section)
+    if doctor_uid:
+        ai_log = {
+            "type": "ai_prescription",
+            "consultation_id": consultation_id,
+            "prescription_id": prescription.id,
+            "patient_uid": c["patient_uid"],
+            "patient_name": c.get("full_name", "Patient"),
+            "diagnosis": illness,
+            "medications": [m.model_dump(mode="json") if hasattr(m, 'model_dump') else m for m in meds],
+            "confidence_score": c.get("confidence_score", 0.0),
+            "hospital_name": hospital_name,
+            "doctor_uid": doctor_uid,
+            "issuing_doctor": doctor_name,
+            "is_resolved": False,
+            "session_id": session_id,
+            "created_at": now.isoformat(),
+        }
+        add_doc(COLLECTION["alerts"], ai_log)
+        logger.info(f"AI log saved for doctor {doctor_uid}, prescription {prescription.id}")
 
     # Notify patient via FCM
     patient_doc = db.collection(COLLECTION["patients"]).document(c["patient_uid"]).get()

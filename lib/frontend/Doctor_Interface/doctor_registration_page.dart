@@ -116,7 +116,17 @@ class _PractitionerRegistrationPageState
         );
       }
     } on DioException catch (e) {
-      String error = e.response?.data['detail'] ?? "Registration failed.";
+      String error = "Registration failed.";
+      if (e.response?.data != null && e.response?.data['detail'] != null) {
+        var detail = e.response?.data['detail'];
+        if (detail is String) {
+          error = detail;
+        } else if (detail is List && detail.isNotEmpty) {
+          error = detail[0]['msg']?.toString() ?? detail.toString();
+        } else {
+          error = detail.toString();
+        }
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error), backgroundColor: Colors.red),
       );
@@ -200,7 +210,7 @@ class _PractitionerRegistrationPageState
             const SizedBox(height: 24),
             Row(
               children: [
-                Expanded(child: _buildDropdownField(context, label: 'Specialization', value: _selectedSpecialization, items: ['General Practice', 'Cardiology', 'Neurology', 'Oncology', 'Pediatrics', 'Radiology'], onChanged: (v) => setState(() => _selectedSpecialization = v!))),
+                Expanded(child: _buildDropdownField(context, label: 'Specialization', value: _selectedSpecialization, items: ['Cardiology', 'Dermatology', 'Emergency Medicine', 'Endocrinology', 'ENT', 'Gastroenterology', 'General Practice', 'General Surgery', 'Gynaecology', 'Haematology', 'Infectious Disease', 'Nephrology', 'Neurology', 'Neurosurgery', 'Obstetrics', 'Oncology', 'Ophthalmology', 'Orthopaedics', 'Paediatric Cardiology', 'Paediatrics', 'Psychiatry', 'Pulmonology', 'Radiology'], onChanged: (v) => setState(() => _selectedSpecialization = v!))),
                 const SizedBox(width: 24),
                 Expanded(child: _buildTextField(context, label: 'Medical License', placeholder: 'LIC-99827-BC', controller: _licenseController)),
               ],

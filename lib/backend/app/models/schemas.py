@@ -251,6 +251,9 @@ class AIAnalysisResult(BaseModel):
     patient_uid: Optional[str] = None
 
     # Frontend CarePathData fields (added for compatibility and robustness)
+    matched_doctor_name: Optional[str] = None
+    matched_doctor_uid: Optional[str] = None
+    recommended_spec: Optional[str] = None
     diagnosis: Optional[str] = None
     confidence: Optional[float] = None
     analysis_detail: Optional[str] = None

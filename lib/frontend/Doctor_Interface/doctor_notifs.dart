@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/api_client.dart';
+import 'appointment_card.dart';
 
 // 🔹 Added Data Model for AlertResponse
 class ClinixAlert {
@@ -32,7 +33,7 @@ class ClinixAlert {
       patientName: json['patient_name'] ?? 'Unknown Patient',
       timestamp: json['received_at'] ?? 'Just now',
       confidence: (json['confidence'] ?? 0.0).toDouble(),
-      requiresVerification: (json['confidence'] ?? 1.0) < 0.40, // 🔹 Triggered by your 6-stage pipeline
+      requiresVerification: (json['confidence'] ?? 1.0) < 0.60, // 🔹 Triggered by your 6-stage pipeline
       symptoms: List<String>.from(json['symptoms'] ?? []),
       assessment: json['ai_assessment'] ?? 'No assessment available.',
       riskScore: (json['risk_score'] ?? 0.0).toDouble(),
@@ -40,9 +41,9 @@ class ClinixAlert {
   }
 
   // 🔹 Logic to determine UI color based on risk score or confidence
-  Color get urgencyColor => riskScore > 0.8 || confidence < 0.40
-      ? const Color(0xFFBA1A1A)
-      : const Color(0xFFF97316);
+  Color get urgencyColor => riskScore > 0.8 || confidence < 0.60
+    ? const Color(0xFFBA1A1A)
+    : const Color(0xFFF97316);
 }
 
 class AlertDashboard extends StatefulWidget {
@@ -54,45 +55,49 @@ class AlertDashboard extends StatefulWidget {
 
 class _AlertDashboardState extends State<AlertDashboard> {
   List<ClinixAlert> _alerts = [];
+  List<ClinixAppointment> _appointments = [];
   bool _isLoading = true;
   int _highPriorityCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _fetchAlerts();
+    _fetchData();
   }
 
-  /// 🔹 BACKEND-DRIVEN: Fetch alerts based on Hospital ID isolation
-  Future<void> _fetchAlerts() async {
+  /// 🔹 BACKEND-DRIVEN: Fetch data based on User and Hospital context
+  Future<void> _fetchData() async {
     setState(() => _isLoading = true);
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       final hospitalId = prefs.getString('hospital_id');
+      final doctorUid = prefs.getString('doctor_uid');
 
-      // 🔹 Call GET /doctor/alerts endpoint
-      final response = await dioClient.get(
+      // Fetch alerts
+      final alertResp = await dioClient.get(
         '/doctor/alerts',
-        queryParameters: {
-          'hospital_id': hospitalId,
-          'status': 'unread',
-        },
+        queryParameters: {'hospital_id': hospitalId, 'status': 'unread'},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
+      if (alertResp.statusCode == 200) {
+        final List<dynamic> data = alertResp.data;
+        _alerts = data.map((json) => ClinixAlert.fromJson(json)).toList();
+        _highPriorityCount = _alerts.where((a) => a.confidence < 0.60).length;
+      }
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        final fetchedAlerts = data.map((json) => ClinixAlert.fromJson(json)).toList();
-
-        setState(() {
-          _alerts = fetchedAlerts;
-          _highPriorityCount = _alerts.where((a) => a.confidence < 0.40).length;
-          _isLoading = false;
-        });
+      // Fetch appointments
+      final apptResp = await dioClient.get(
+        '/doctor/appointments/$doctorUid',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      if (apptResp.statusCode == 200) {
+        final List<dynamic> data = apptResp.data;
+        _appointments = data.map((json) => ClinixAppointment.fromJson(json)).toList();
       }
     } catch (e) {
-      debugPrint("❌ Alert Fetch Error: $e");
+      debugPrint("❌ Dashboard fetch error: $e");
+    } finally {
       setState(() => _isLoading = false);
     }
   }
@@ -109,7 +114,7 @@ class _AlertDashboardState extends State<AlertDashboard> {
             const CircleAvatar(
               radius: 20,
               backgroundColor: Color(0xFFCEE5FF),
-              backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuBB4f8v_RW8BZojSCSEwgiA04kxmsLA4h_H6qK0CRDn1zt-TEboQFmfzAY9zF17TOCm32uHm1W2OYHk8jJnKuAC9sBvMq2YJgnucQX0Vr3tgPH4otHuapEoFrUolb0wvL7kfXri74ZvPCuTZhX7so668ZZE0EUBC1e-raOlfE0WxhufmjkDs0C1Gxa4NPJh9Ir6xQSeneH61p-Etg2bffK6TdAqhf3gobAtA2IWuAHTI3JwWYSPtQ94hK5ZOHThm-_b-XcUdf1uUJ0'),
+              backgroundImage: NetworkImage('https://ui-avatars.com/api/?name=Dr+Ramesh&background=0D8ABC&color=fff'),
             ),
             const SizedBox(width: 12),
             Text(
@@ -123,7 +128,7 @@ class _AlertDashboardState extends State<AlertDashboard> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
-          onRefresh: _fetchAlerts,
+          onRefresh: _fetchData,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: Column(
@@ -132,7 +137,7 @@ class _AlertDashboardState extends State<AlertDashboard> {
               const Text('Urgent Referrals', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF191C20))),
               const SizedBox(height: 8),
 
-              // 🔹 DYNAMIC COUNTER: From backend data
+              // 🔹 DYNAMIC COUNTER
               if (_highPriorityCount > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -152,7 +157,7 @@ class _AlertDashboardState extends State<AlertDashboard> {
 
               const SizedBox(height: 32),
 
-              // 🔹 DYNAMIC ALERT CARDS: No longer hardcoded
+              // 🔹 DYNAMIC ALERT CARDS
               if (_alerts.isEmpty)
                 const Center(child: Text("No unread alerts for your facility."))
               else
@@ -162,12 +167,25 @@ class _AlertDashboardState extends State<AlertDashboard> {
                     const SizedBox(height: 24),
                   ],
                 )).toList(),
+
+              // New: Appointments Section
+              const SizedBox(height: 32),
+              const Text('Upcoming Appointments', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF191C20))),
+              const SizedBox(height: 8),
+              if (_appointments.isEmpty)
+                const Center(child: Text("No upcoming appointments."))
+              else
+                ..._appointments.map((appt) => Column(
+                  children: [
+                    AppointmentCard(appointment: appt),
+                    const SizedBox(height: 24),
+                  ],
+                )).toList(),
             ],
             ),
           ),
         ),
       ),
-      // Bottom Navigation remains same UI...
     );
   }
 }
