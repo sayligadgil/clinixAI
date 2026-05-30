@@ -24,7 +24,7 @@ class CarePathScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.85),
+        backgroundColor: Colors.white.withAlpha((0.85 * 255).round()),
         elevation: 1,
         automaticallyImplyLeading: false,
         title: Row(
@@ -91,10 +91,10 @@ class CarePathScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                    color: const Color(0xFFC0C7D1).withOpacity(0.4)),
+                    color: const Color(0xFFC0C7D1).withAlpha((0.4 * 255).round())),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withAlpha((0.04 * 255).round()),
                       blurRadius: 12,
                       offset: const Offset(0, 4))
                 ],
@@ -155,6 +155,15 @@ class CarePathScreen extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                               color: Color(0xFF004976))),
+                    if (analysisResult.confidence < 0.5)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text('Analysis uncertain, please consult a doctor.',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.redAccent,
+                                fontWeight: FontWeight.w600)),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -224,7 +233,7 @@ class CarePathScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     const Text('Best for non-emergency ailments.', style: TextStyle(fontSize: 14)),
                     const SizedBox(height: 24),
-                    Text('\$${analysisResult.prescriptionPrice} USD',
+                    Text('₹${analysisResult.prescriptionPrice} INR',
                         style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF004976))),
                   ],
                 ),
@@ -241,10 +250,8 @@ class CarePathScreen extends StatelessWidget {
                   hospitalName: analysisResult.hospitalName,
                   hospitalLocation: "Specialist Wing",
                   appointmentTime: "Tomorrow, 10:30 AM",
-                  rating: 4.8,
-                  reviews: 94,
-                  experienceYears: 12,
-                  matchedReason: "Clinical match for ${analysisResult.diagnosis}",
+                  patientSymptoms: selectedSymptoms,
+                  details: analysisResult.analysisDetail,
                   doctorUid: analysisResult.doctorUid,
                   hospitalId: analysisResult.hospitalId,
                   consultationId: analysisResult.consultationId,

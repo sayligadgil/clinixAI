@@ -29,6 +29,7 @@ class ConsultationData {
   final List<Medication> medications;
   final String? consultationId;
   final String? doctorName;
+  final String? prescriptionId; // Actual prescription document ID for PDF download
 
   ConsultationData({
     required this.sessionId,
@@ -39,5 +40,6 @@ class ConsultationData {
     required this.medications,
     this.consultationId,
     this.doctorName,
+    this.prescriptionId,
   });
 }

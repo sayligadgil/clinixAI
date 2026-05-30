@@ -79,7 +79,17 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
         );
       }
     } on DioException catch (e) {
-      String error = e.response?.data['detail'] ?? "Login failed. Check credentials.";
+      String error = "Login failed. Check credentials.";
+      if (e.response?.data != null && e.response?.data['detail'] != null) {
+        var detail = e.response?.data['detail'];
+        if (detail is String) {
+          error = detail;
+        } else if (detail is List && detail.isNotEmpty) {
+          error = detail[0]['msg']?.toString() ?? detail.toString();
+        } else {
+          error = detail.toString();
+        }
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error), backgroundColor: Colors.red),

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../core/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'doctor_notifs.dart';
 
 // REUSING THE COLORS FROM PREVIOUS SCREEN FOR CONSISTENCY
@@ -85,8 +87,14 @@ class _PatientHistoryScreenState extends State<PatientHistoryScreen> {
 
   Future<void> _loadTokenAndHistory() async {
     final prefs = await SharedPreferences.getInstance();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      user = await FirebaseAuth.instance.authStateChanges().first;
+    }
+    final idToken = user != null ? await user.getIdToken(true) : prefs.getString('token');
+    
     setState(() {
-      token = prefs.getString('token') ?? "YOUR_BEARER_TOKEN";
+      token = idToken ?? "YOUR_BEARER_TOKEN";
       hospitalId = prefs.getString('hospital_id') ?? "HOSP_001";
       _historyFuture = _fetchHistory();
     });
@@ -94,13 +102,16 @@ class _PatientHistoryScreenState extends State<PatientHistoryScreen> {
 
   Future<List<ConsultationResponse>> _fetchHistory() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/doctor/consultations?hospital_id=$hospitalId&status=completed'),
-        headers: {'Authorization': 'Bearer $token'},
+      final response = await dioClient.get(
+        '/doctor/consultations',
+        queryParameters: {
+          'hospital_id': hospitalId,
+          'status': 'completed'
+        },
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = response.data;
         _allRecords = data.map((json) => ConsultationResponse.fromJson(json)).toList();
         _filteredRecords = List.from(_allRecords);
         return _allRecords;
@@ -137,9 +148,9 @@ class _PatientHistoryScreenState extends State<PatientHistoryScreen> {
             centerTitle: false,
             title: Row(
               children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/...'),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage('https://ui-avatars.com/api/?name=Dr+Ramesh&background=0D8ABC&color=fff'),
                 ),
                 const SizedBox(width: 12),
                 const Text('CliniX AI',

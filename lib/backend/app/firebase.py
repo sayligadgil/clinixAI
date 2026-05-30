@@ -78,8 +78,28 @@ class FirebaseHelper:
             query = query.order_by(order_by)
         if limit:
             query = query.limit(limit)
-        docs = query.stream()
-        return [{"id": doc.id, **doc.to_dict()} for doc in docs]
+        try:
+            docs = query.stream()
+            return [{"id": doc.id, **doc.to_dict()} for doc in docs]
+        except Exception as e:
+            if order_by and "requires an index" in str(e):
+                print(f"WARNING: Firestore index missing for {collection}; proceeding without order_by.")
+                # Rebuild query without order_by
+                query_no_order = get_db().collection(collection)
+                for field, operator, value in filters:
+                    query_no_order = query_no_order.where(field, operator, value)
+                if limit:
+                    query_no_order = query_no_order.limit(limit)
+                
+                docs = query_no_order.stream()
+                results = [{"id": doc.id, **doc.to_dict()} for doc in docs]
+                
+                # Sort in memory
+                descending = order_by.startswith('-')
+                sort_key = order_by[1:] if descending else order_by
+                results.sort(key=lambda x: str(x.get(sort_key, '')), reverse=descending)
+                return results
+            raise e
 
     @staticmethod
     def get_subcollection_docs(parent_collection: str, parent_id: str,
@@ -111,7 +131,23 @@ class FirebaseHelper:
     @staticmethod
     def get_doctor_by_uid(uid: str) -> Optional[Dict[str, Any]]:
         """Get doctor by Firebase UID"""
-        return FirebaseHelper.get_document("doctors", uid)
+        doc = FirebaseHelper.get_document("doctors", uid)
+        if not doc:
+            try:
+                import json
+                from pathlib import Path
+                seed_file = Path(__file__).parent.parent / "doctors_seed.json"
+                if not seed_file.exists():
+                    seed_file = Path(__file__).parent.parent / "output" / "doctors_seed.json"
+                with open(seed_file) as f:
+                    doctors = json.load(f)
+                for d in doctors:
+                    if d.get('uid') == uid:
+                        d['id'] = d['uid']
+                        return d
+            except Exception as e:
+                pass
+        return doc
 
     @staticmethod
     def get_patient_by_uid(uid: str) -> Optional[Dict[str, Any]]:
@@ -121,7 +157,23 @@ class FirebaseHelper:
     @staticmethod
     def get_doctors_by_hospital(hospital_id: str) -> List[Dict[str, Any]]:
         """Get all doctors from a specific hospital"""
-        return FirebaseHelper.query_documents("doctors", [('hospital_id', '==', hospital_id)])
+        docs = FirebaseHelper.query_documents("doctors", [('hospital_id', '==', hospital_id)])
+        if not docs:
+            try:
+                import json
+                from pathlib import Path
+                seed_file = Path(__file__).parent.parent / "doctors_seed.json"
+                if not seed_file.exists():
+                    seed_file = Path(__file__).parent.parent / "output" / "doctors_seed.json"
+                with open(seed_file) as f:
+                    doctors = json.load(f)
+                docs = [d for d in doctors if d.get('hospital_id') == hospital_id]
+                for d in docs:
+                    if 'uid' in d:
+                        d['id'] = d['uid']
+            except Exception as e:
+                pass
+        return docs
 
     @staticmethod
     def get_icd10_codes_for_hospital(hospital_id: str) -> List[Dict[str, Any]]:

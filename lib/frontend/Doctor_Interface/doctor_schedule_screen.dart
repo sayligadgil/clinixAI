@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../core/api_client.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'doctor_notifs.dart';
 
 // --- Data Models ---
@@ -81,8 +83,14 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
 
   Future<void> _loadTokenAndAppointments() async {
     final prefs = await SharedPreferences.getInstance();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      user = await FirebaseAuth.instance.authStateChanges().first;
+    }
+    final idToken = user != null ? await user.getIdToken(true) : prefs.getString('token');
+    
     setState(() {
-      token = prefs.getString('token') ?? "YOUR_BEARER_TOKEN";
+      token = idToken ?? "YOUR_BEARER_TOKEN";
       _appointmentsFuture = fetchAppointments(_selectedDate);
     });
   }
@@ -90,16 +98,15 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
   Future<List<Appointment>> fetchAppointments(DateTime date) async {
     try {
       final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      final response = await http.get(
-        Uri.parse('$baseUrl/doctor/schedule?date=$formattedDate'),
-        headers: {'Authorization': 'Bearer $token'},
+      final response = await dioClient.get(
+        '/doctor/schedule',
+        queryParameters: {'date': formattedDate},
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = response.data;
         return data.map((json) => Appointment.fromJson(json)).toList();
       } else {
-        // Fallback or throw error
         throw Exception('Failed to load schedule');
       }
     } catch (e) {
@@ -112,11 +119,14 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
     setState(() { appt.isCompleted = value ?? false; });
 
     // Backend update
-    await http.patch(
-      Uri.parse('$baseUrl/doctor/appointments/${appt.id}'),
-      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
-      body: json.encode({'status': (value ?? false) ? 'completed' : 'pending'}),
-    );
+    try {
+      await dioClient.patch(
+        '/doctor/appointments/${appt.id}',
+        data: {'status': (value ?? false) ? 'completed' : 'pending'},
+      );
+    } catch (e) {
+      debugPrint("Failed to update status: $e");
+    }
   }
 
   @override
@@ -128,16 +138,26 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
         elevation: 0,
         title: Row(
           children: [
-            const CircleAvatar(radius: 20, backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/...')),
+            const CircleAvatar(radius: 20, backgroundImage: NetworkImage('https://ui-avatars.com/api/?name=Dr+Ramesh&background=0D8ABC&color=fff')),
             const SizedBox(width: 12),
             const Text('CliniX AI', style: TextStyle(color: CliniColor.primaryContainer, fontWeight: FontWeight.w900, fontSize: 20)),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.grey),
+            icon: const Icon(Icons.notifications_outlined, color: CliniColor.primary),
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AlertDashboard())),
           ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: CliniColor.primary),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
+              if (context.mounted) Navigator.pushReplacementNamed(context, '/');
+            },
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: FutureBuilder<List<Appointment>>(
@@ -210,6 +230,7 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () {},
         backgroundColor: CliniColor.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -502,7 +523,6 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
             Checkbox(value: isCompleted, onChanged: onChanged, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-            const Icon(Icons.more_vert, color: Colors.grey),
           ],
         ),
       ),

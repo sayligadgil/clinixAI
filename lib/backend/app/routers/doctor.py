@@ -21,6 +21,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
+from google.api_core.exceptions import FailedPrecondition
 from typing import Optional, List
 
 from app.firebase import get_doc, set_doc, query_collection, add_doc, get_firestore, COLLECTION, send_push
@@ -54,6 +55,26 @@ async def update_doctor_profile(uid: str, update: dict,
     update["updated_at"] = datetime.now(timezone.utc).isoformat()
     set_doc(COLLECTION["doctors"], uid, update)
     return {"success": True}
+
+# ── Doctor Matching ─────────────────────────────────────────────────────────────
+@router.get("/match")
+async def match_doctor(
+    hospital_id: str,
+    specialization: str,
+    current_user: CurrentUser = Depends(require_doctor)
+):
+    """Return a doctor matching the given hospital and specialization.
+    Currently returns the first matching doctor.
+    """
+    doctors = query_collection(
+        COLLECTION["doctors"],
+        filters=[("hospital_id", "==", hospital_id), ("specialization", "==", specialization)],
+        limit=1,
+    )
+    if not doctors:
+        raise HTTPException(status_code=404, detail="No matching doctor found.")
+    doc = doctors[0]
+    return {"doctor_uid": doc.get("uid"), "full_name": doc.get("full_name")}
 
 
 # ── Alerts ────────────────────────────────────────────────────────────────────
@@ -210,11 +231,21 @@ async def review_consultation(consultation_id: str,
 async def get_doctor_appointments(uid: str, current_user: CurrentUser = Depends(require_doctor)):
     if current_user.uid != uid:
         raise HTTPException(status_code=403, detail="Access denied.")
-    return query_collection(
-        COLLECTION["appointments"],
-        filters=[("doctor_uid", "==", uid)],
-        order_by="created_at", limit=50,
-    )
+    try:
+        return query_collection(
+            COLLECTION["appointments"],
+            filters=[("doctor_uid", "==", uid)],
+            order_by="created_at",
+            limit=50,
+        )
+    except FailedPrecondition:
+        # Missing composite index – fallback without ordering
+        logging.warning("Firestore index missing for doctor appointments query; proceeding without order_by.")
+        return query_collection(
+            COLLECTION["appointments"],
+            filters=[("doctor_uid", "==", uid)],
+            limit=50,
+        )
 
 @router.put("/appointment/{appointment_id}/status")
 async def update_appointment_status(appointment_id: str,
@@ -414,12 +445,21 @@ async def get_doctor_schedule(
     filters = [("doctor_uid", "==", current_user.uid)]
     if date:
         filters.append(("scheduled_date", "==", date))
-        
-    appointments = query_collection(
-        COLLECTION["appointments"],
-        filters=filters,
-        order_by="created_at", limit=100
-    )
+    try:
+        appointments = query_collection(
+            COLLECTION["appointments"],
+            filters=filters,
+            order_by="created_at", limit=100
+        )
+    except FailedPrecondition:
+        # Missing composite index – fallback without ordering
+        appointments = query_collection(
+            COLLECTION["appointments"],
+            filters=filters, limit=100
+        )
+        import logging
+        logging.warning("Firestore index missing for appointments query; proceeding without order_by.")
+
     
     results = []
     for appt in appointments:

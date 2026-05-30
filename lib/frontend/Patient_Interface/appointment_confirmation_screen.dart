@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clinixai/backend/app/models/appointment.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dio/dio.dart';
 import '../../core/api_client.dart';
 
@@ -22,9 +22,12 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
   Future<void> _bookAppointment() async {
     setState(() => _isBooking = true);
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-      final patientUid = prefs.getString('patient_uid') ?? prefs.getString('uid') ?? 'guest_patient';
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User not signed in. Please restart the app.');
+      }
+      final idToken = await user.getIdToken();
+      final patientUid = user.uid;
 
       // Call live POST /patient/appointment
       final response = await dioClient.post(
@@ -35,11 +38,11 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           'doctor_uid': widget.appointment.doctorUid ?? 'doc_ramesh_uid',
           'preferred_doctor_uid': widget.appointment.doctorUid ?? 'doc_ramesh_uid',
           'hospital_id': widget.appointment.hospitalId ?? 'HOSP_001',
-          'preferred_date': DateTime.now().add(const Duration(days: 1)).toString().substring(0, 10),
+          'preferred_date': DateTime.now().toString().substring(0, 10),
           'preferred_time': '10:30 AM',
-          'reason': widget.appointment.matchedReason,
+          'reason': widget.appointment.details ?? 'General consultation',
         },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(headers: {'Authorization': 'Bearer $idToken'}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -52,7 +55,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
           );
           await Future.delayed(const Duration(seconds: 2));
           if (mounted) {
-            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pushNamedAndRemoveUntil(context, '/user_selection', (route) => false);
           }
         }
       } else {
@@ -79,7 +82,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FF),
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.85),
+        backgroundColor: Colors.white.withAlpha((0.85 * 255).round()),
         elevation: 1,
         automaticallyImplyLeading: false,
         title: Row(
@@ -165,7 +168,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
                           children: [
                             const Text('Symptom Analysis', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF004976))),
                             const SizedBox(height: 4),
-                            Text(widget.appointment.matchedReason,
+                            Text(widget.appointment.details ?? 'General consultation',
                                 style: const TextStyle(fontSize: 11, color: Color(0xFF414750), height: 1.4)),
                           ],
                         ),
@@ -202,8 +205,8 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color(0xFFC0C7D1).withOpacity(0.2)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4))],
+                border: Border.all(color: const Color(0xFFC0C7D1).withAlpha((0.2 * 255).round())),
+                boxShadow: [BoxShadow(color: Colors.black.withAlpha((0.04 * 255).round()), blurRadius: 12, offset: const Offset(0, 4))],
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,23 +233,8 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
                         Text("${widget.appointment.specialization} at ${widget.appointment.hospitalName}",
                             style: const TextStyle(fontSize: 13, color: Color(0xFF004976), fontWeight: FontWeight.w500)),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Icon(Icons.star, size: 14, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Text('${widget.appointment.rating} (${widget.appointment.reviews}+ reviews)',
-                                style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                          ],
-                        ),
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.verified_outlined, size: 14, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Text('${widget.appointment.experienceYears} yrs experience',
-                                style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                          ],
-                        ),
+                        const Text('Specialist details are available in the doctor profile.', style: TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ),
                   ),
@@ -349,7 +337,7 @@ class _AppointmentConfirmationScreenState extends State<AppointmentConfirmationS
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem(icon: Icons.home, label: 'Home', active: true, onTap: () => Navigator.popUntil(context, (route) => route.isFirst)),
+            _navItem(icon: Icons.home, label: 'Home', active: true, onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/user_selection', (route) => false)),
             _navItem(icon: Icons.settings_outlined, label: 'Settings', active: false, onTap: () {}),
           ],
         ),

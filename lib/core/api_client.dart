@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 // Create a globally accessible Dio instance configured with standard options.
@@ -14,3 +15,25 @@ final Dio dioClient = Dio(
     },
   ),
 );
+
+void _setupAuthInterceptor() {
+  dioClient.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final idToken = await user.getIdToken();
+          options.headers['Authorization'] = 'Bearer $idToken';
+        }
+      } catch (e) {
+        // If token retrieval fails, proceed without auth header; backend will reject.
+      }
+      return handler.next(options);
+    },
+  ));
+}
+
+// Initialize interceptor
+void initializeApiClient() {
+  _setupAuthInterceptor();
+}

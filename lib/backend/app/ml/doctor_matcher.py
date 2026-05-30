@@ -72,7 +72,7 @@ class DoctorMatcher:
             matches.append(DoctorMatch(
                 doctor_uid=doctor['id'],
                 doctor_name=doctor['full_name'],
-                specialization=doctor['specialization'],
+                specialization=doctor.get('specialization') or doctor.get('specialty', ''),
                 hospital_id=doctor['hospital_id'],
                 match_score=round(item['score'], 2),
                 availability="Available"  # TODO: Integrate with scheduling system
@@ -146,13 +146,14 @@ class DoctorMatcher:
         Calculate how well a doctor matches the consultation needs
 
         Scoring factors:
+        - Base score for being in hospital: 0.1
         - Exact specialization match: 1.0
         - Related specialization: 0.6
         - Emergency Medicine (for high risk): +0.3
         - General specializations: 0.3
         """
-        score = 0.0
-        doctor_spec = doctor.get('specialization', '')
+        score = 0.1
+        doctor_spec = doctor.get('specialization') or doctor.get('specialty', '')
 
         # Exact match
         if doctor_spec in required_specializations:

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import 'package:clinixai/backend/app/models/appointment.dart';
 import '../../core/api_client.dart';
 
@@ -73,8 +74,14 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     setState(() => _isLoading = true);
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
       final doctorUid = prefs.getString('doctor_uid');
+      
+      // Ensure we have the latest token
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        user = await FirebaseAuth.instance.authStateChanges().first;
+      }
+      final token = user != null ? await user.getIdToken(true) : prefs.getString('token');
 
       final response = await dioClient.get(
         '/doctor/dashboard',
@@ -92,6 +99,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
           _isLoading = false;
         });
       }
+    } on DioException catch (e) {
+      debugPrint("Dashboard Error: ${e.response?.data}");
+      setState(() => _isLoading = false);
     } catch (e) {
       debugPrint("Dashboard Error: $e");
       setState(() => _isLoading = false);
@@ -298,6 +308,15 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       title: const Text('CliniX AI', style: TextStyle(fontFamily: 'Manrope', fontWeight: FontWeight.w800, color: Color(0xFF00629B))),
       actions: [
         IconButton(icon: const Icon(Icons.notifications_outlined), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AlertDashboard()))),
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.clear();
+            if (context.mounted) Navigator.pushReplacementNamed(context, '/');
+          },
+        ),
         const SizedBox(width: 16),
       ],
     );
@@ -323,7 +342,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text('Upcoming Appointments', style: TextStyle(fontFamily: 'Manrope', fontSize: 24, fontWeight: FontWeight.w700, color: Color(0xFF004976))),
-        Text('Today, Oct 24', style: TextStyle(fontSize: 13, color: const Color(0xFF414750))),
+        Text('Today, ${DateFormat('MMM d').format(DateTime.now())}', style: const TextStyle(fontSize: 13, color: Color(0xFF414750))),
       ],
     );
   }
@@ -345,5 +364,5 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     );
   }
 
-  Widget _buildFAB() => FloatingActionButton(onPressed: () {}, backgroundColor: const Color(0xFF004976), child: const Icon(Icons.add, color: Colors.white));
+  Widget _buildFAB() => FloatingActionButton(heroTag: null, onPressed: () {}, backgroundColor: const Color(0xFF004976), child: const Icon(Icons.add, color: Colors.white));
 }

@@ -125,8 +125,8 @@ class PrescriptionGenerator:
 
     def _get_prescription_by_symptoms(self, symptoms: List[str]) -> Dict:
         """
-        Generate prescription based on symptoms
-        Queries Firestore for symptom-based medication rules
+        Generate prescription based on symptoms.
+        First tries Firestore, then falls back to built-in medication rules.
         """
         try:
             # Query symptom-based rules from Firestore
@@ -141,36 +141,139 @@ class PrescriptionGenerator:
             for doc in symptom_rules:
                 data = doc.to_dict()
                 symptom_keyword = data.get('symptom_keyword', '').lower()
-
-                # Check if this symptom keyword matches any patient symptom
                 if any(symptom_keyword in s for s in symptom_lower):
                     medications.extend(data.get('medications', []))
                     dietary_advice.update(data.get('dietary_advice', []))
                     warning_signs.update(data.get('warning_signs', []))
 
-            # Remove duplicate medications
-            seen = set()
-            unique_meds = []
-            for med in medications:
-                if med['name'] not in seen:
-                    seen.add(med['name'])
-                    unique_meds.append(med)
-
-            return {
-                'medications': unique_meds[:3],  # Max 3 symptomatic meds
-                'dietary_advice': list(dietary_advice) or ['Stay hydrated', 'Get adequate rest'],
-                'warning_signs': list(warning_signs) or ['Symptoms worsen', 'No improvement in 3 days']
-            }
+            # If Firestore had data, use it
+            if medications:
+                seen = set()
+                unique_meds = []
+                for med in medications:
+                    if med['name'] not in seen:
+                        seen.add(med['name'])
+                        unique_meds.append(med)
+                return {
+                    'medications': unique_meds[:4],
+                    'dietary_advice': list(dietary_advice) or ['Stay hydrated', 'Get adequate rest'],
+                    'warning_signs': list(warning_signs) or ['Symptoms worsen', 'No improvement in 3 days']
+                }
 
         except Exception as e:
             print(f"[WARN] Error fetching symptom-based prescriptions: {str(e)}")
-            # Minimal fallback
-            return {
-                'medications': [],
-                'dietary_advice': ['Stay hydrated', 'Get adequate rest'],
-                'warning_signs': ['Consult a doctor if symptoms persist']
-            }
 
+        # Built-in fallback: map symptoms to standard OTC medications
+        return self._builtin_symptom_prescription(symptoms)
+
+    def _builtin_symptom_prescription(self, symptoms: List[str]) -> Dict:
+        """Built-in medication rules when Firestore has no data."""
+        symptom_lower = [s.lower() for s in symptoms]
+
+        BUILTIN_RULES = {
+            'fever': {
+                'medications': [
+                    {'name': 'Paracetamol (Crocin)', 'dosage': '500mg', 'frequency': 'Twice daily', 'duration_days': 5, 'instructions': 'After meals'},
+                    {'name': 'Ibuprofen', 'dosage': '400mg', 'frequency': 'Thrice daily if fever > 102°F', 'duration_days': 3, 'instructions': 'With food and water'},
+                ],
+                'dietary_advice': ['Increase fluid intake', 'Rest adequately', 'Avoid cold drinks'],
+                'warning_signs': ['Fever > 104°F', 'Difficulty breathing', 'Rash or skin changes'],
+            },
+            'cough': {
+                'medications': [
+                    {'name': 'Dextromethorphan (Benadryl Cough)', 'dosage': '10ml', 'frequency': 'Three times a day', 'duration_days': 5, 'instructions': 'Before bedtime for dry cough'},
+                    {'name': 'Ambroxol (Mucosolvan)', 'dosage': '30mg', 'frequency': 'Twice daily', 'duration_days': 5, 'instructions': 'For productive cough with mucus'},
+                ],
+                'dietary_advice': ['Drink warm water with honey', 'Avoid cold beverages', 'Steam inhalation twice daily'],
+                'warning_signs': ['Blood in sputum', 'Difficulty breathing', 'Cough persists > 2 weeks'],
+            },
+            'cold': {
+                'medications': [
+                    {'name': 'Cetirizine (Zyrtec)', 'dosage': '10mg', 'frequency': 'Once daily at night', 'duration_days': 5, 'instructions': 'For runny nose and sneezing'},
+                    {'name': 'Pseudoephedrine (Sudafed)', 'dosage': '60mg', 'frequency': 'Twice daily', 'duration_days': 3, 'instructions': 'For nasal congestion'},
+                ],
+                'dietary_advice': ['Vitamin C supplements', 'Warm soups and fluids', 'Rest'],
+                'warning_signs': ['High fever', 'Ear pain', 'Persistent symptoms beyond 10 days'],
+            },
+            'headache': {
+                'medications': [
+                    {'name': 'Paracetamol (Crocin)', 'dosage': '500mg', 'frequency': 'Every 4–6 hours as needed', 'duration_days': 3, 'instructions': 'Max 4 tablets per day'},
+                    {'name': 'Sumatriptan (Imigran)', 'dosage': '50mg', 'frequency': 'Once at onset of migraine', 'duration_days': 1, 'instructions': 'Only if migraine is confirmed'},
+                ],
+                'dietary_advice': ['Stay hydrated', 'Reduce screen time', 'Sleep in a dark, quiet room'],
+                'warning_signs': ['Sudden severe headache', 'Headache with stiff neck', 'Vision changes'],
+            },
+            'vomit': {
+                'medications': [
+                    {'name': 'Ondansetron (Zofran)', 'dosage': '4mg', 'frequency': 'Every 8 hours', 'duration_days': 3, 'instructions': 'Dissolve under tongue'},
+                    {'name': 'ORS (Electral)', 'dosage': '1 sachet in 1L water', 'frequency': 'Sip continuously', 'duration_days': 3, 'instructions': 'To prevent dehydration'},
+                ],
+                'dietary_advice': ['BRAT diet (Banana, Rice, Applesauce, Toast)', 'Avoid dairy', 'Small sips of water frequently'],
+                'warning_signs': ['Blood in vomit', 'Severe abdominal pain', 'Signs of dehydration'],
+            },
+            'diarrhea': {
+                'medications': [
+                    {'name': 'Loperamide (Imodium)', 'dosage': '2mg', 'frequency': 'After each loose stool (max 8mg/day)', 'duration_days': 2, 'instructions': 'Symptomatic relief only'},
+                    {'name': 'ORS (Electral)', 'dosage': '1 sachet in 1L water', 'frequency': 'Sip continuously', 'duration_days': 3, 'instructions': 'Critical for rehydration'},
+                ],
+                'dietary_advice': ['BRAT diet', 'Avoid spicy and fatty foods', 'Probiotics like yogurt'],
+                'warning_signs': ['Blood in stool', 'Severe abdominal cramps', 'Signs of dehydration'],
+            },
+            'throat': {
+                'medications': [
+                    {'name': 'Amoxicillin', 'dosage': '500mg', 'frequency': 'Three times daily', 'duration_days': 7, 'instructions': 'Complete full course even if better'},
+                    {'name': 'Benzocaine (Strepsils)', 'dosage': '1 lozenge', 'frequency': 'Every 3 hours as needed', 'duration_days': 5, 'instructions': 'Dissolve slowly in mouth'},
+                ],
+                'dietary_advice': ['Warm saline gargles', 'Warm fluids', 'Avoid cold drinks'],
+                'warning_signs': ['Difficulty swallowing', 'High fever > 101°F', 'Swollen lymph nodes'],
+            },
+            'stomach': {
+                'medications': [
+                    {'name': 'Pantoprazole', 'dosage': '40mg', 'frequency': 'Once daily before breakfast', 'duration_days': 7, 'instructions': 'For acidity and gastritis'},
+                    {'name': 'Domperidone (Motilium)', 'dosage': '10mg', 'frequency': 'Before meals', 'duration_days': 5, 'instructions': 'For bloating and nausea'},
+                ],
+                'dietary_advice': ['Avoid spicy, oily food', 'Small frequent meals', 'Avoid lying down after eating'],
+                'warning_signs': ['Severe abdominal pain', 'Blood in stool', 'Unexplained weight loss'],
+            },
+            'body': {
+                'medications': [
+                    {'name': 'Ibuprofen', 'dosage': '400mg', 'frequency': 'Twice daily', 'duration_days': 5, 'instructions': 'After meals for body aches'},
+                    {'name': 'Vitamin D3 (60,000 IU)', 'dosage': '1 tablet', 'frequency': 'Once weekly', 'duration_days': 42, 'instructions': 'For muscle and bone pain'},
+                ],
+                'dietary_advice': ['Rest and limit physical activity', 'Warm compress on affected areas'],
+                'warning_signs': ['Severe joint swelling', 'Inability to walk', 'Fever accompanying pain'],
+            },
+        }
+
+        matched_meds = []
+        matched_advice = set()
+        matched_warnings = set()
+        used_names = set()
+
+        for keyword, rule in BUILTIN_RULES.items():
+            if any(keyword in s for s in symptom_lower):
+                for med in rule['medications']:
+                    if med['name'] not in used_names:
+                        used_names.add(med['name'])
+                        matched_meds.append(med)
+                matched_advice.update(rule['dietary_advice'])
+                matched_warnings.update(rule['warning_signs'])
+
+        # Default if nothing matched
+        if not matched_meds:
+            matched_meds = [
+                {'name': 'Paracetamol (Crocin)', 'dosage': '500mg', 'frequency': 'Twice daily', 'duration_days': 5, 'instructions': 'After meals'},
+                {'name': 'Vitamin C', 'dosage': '500mg', 'frequency': 'Once daily', 'duration_days': 7, 'instructions': 'For immune support'},
+            ]
+            matched_advice = {'Stay hydrated', 'Adequate rest', 'Monitor symptoms'}
+            matched_warnings = {'Consult a doctor if symptoms worsen or persist beyond 5 days'}
+
+        return {
+            'medications': matched_meds[:4],
+            'dietary_advice': list(matched_advice),
+            'warning_signs': list(matched_warnings),
+            'follow_up_days': 5,
+        }
     def _filter_allergies(self, medications: List[Dict], allergies: List[str]) -> List[Dict]:
         """
         Remove medications that match patient allergies

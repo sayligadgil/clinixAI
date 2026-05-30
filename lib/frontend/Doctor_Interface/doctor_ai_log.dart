@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../core/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // --- Data Models (Schemas) ---
 
@@ -122,21 +124,24 @@ class _PrescriptionLogPageState extends State<PrescriptionLogPage> {
 
   Future<void> _loadTokenAndConsultations() async {
     final prefs = await SharedPreferences.getInstance();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      user = await FirebaseAuth.instance.authStateChanges().first;
+    }
+    final idToken = user != null ? await user.getIdToken(true) : prefs.getString('token');
+    
     setState(() {
-      token = prefs.getString('token') ?? "YOUR_BEARER_TOKEN";
+      token = idToken ?? "YOUR_BEARER_TOKEN";
       _consultationsFuture = fetchConsultations();
     });
   }
 
   Future<List<ConsultationResponse>> fetchConsultations() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/doctor/consultations'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
+      final response = await dioClient.get('/doctor/consultations');
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = response.data;
         return data.map((json) => ConsultationResponse.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load consultations');
@@ -162,7 +167,7 @@ class _PrescriptionLogPageState extends State<PrescriptionLogPage> {
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFFCEE5FF), width: 2),
                 image: const DecorationImage(
-                  image: NetworkImage('https://lh3.googleusercontent.com/aida-public/...'),
+                  image: NetworkImage('https://ui-avatars.com/api/?name=Dr+Ramesh&background=0D8ABC&color=fff'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -387,11 +392,6 @@ class PrescriptionCard extends StatelessWidget {
                   child: Text(m, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500)),
                 )).toList()),
               ])),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(backgroundColor: accentColor.withOpacity(0.15), foregroundColor: accentColor, elevation: 0, shape: const StadiumBorder()),
-                child: const Text('Review', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-              ),
             ],
           )
         ],
