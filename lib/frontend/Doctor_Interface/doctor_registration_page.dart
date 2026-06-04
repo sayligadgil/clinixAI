@@ -55,19 +55,34 @@ class _PractitionerRegistrationPageState
     super.dispose();
   }
 
-  /// 🔹 DATABASE-DRIVEN: Load Apollo, KIMS, Continental from Firestore
+  /// 🔹 BACKEND-DRIVEN: Load Apollo, KIMS, Continental from FastAPI
   Future<void> _loadHospitals() async {
     try {
-      final snapshot = await _firestore.collection('hospitals').get();
-      setState(() {
-        _hospitals = snapshot.docs.map((doc) => {
-          'id': doc.id,
-          'name': doc.data()['name'],
-        }).toList();
-        if (_hospitals.isNotEmpty) _selectedHospitalId = _hospitals[0]['id'];
-      });
+      final response = await dioClient.get('/patient/hospitals');
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> data = response.data;
+        if (mounted) {
+          setState(() {
+            _hospitals = data.map((h) => {
+              'id': h['id']?.toString() ?? '',
+              'name': h['name']?.toString() ?? 'Unknown Hospital',
+            }).toList();
+            if (_hospitals.isNotEmpty) _selectedHospitalId = _hospitals[0]['id'];
+          });
+        }
+      }
     } catch (e) {
       debugPrint("Error loading hospitals: $e");
+      if (mounted) {
+        setState(() {
+          _hospitals = [
+            {'id': 'apollo_jh', 'name': 'Apollo Hospitals, Jubilee Hills'},
+            {'id': 'kims_begumpet', 'name': 'KIMS-Sunshine Hospitals, Begumpet'},
+            {'id': 'continental_gachibowli', 'name': 'Continental Hospitals, Gachibowli'}
+          ];
+          _selectedHospitalId = _hospitals[0]['id'];
+        });
+      }
     }
   }
 

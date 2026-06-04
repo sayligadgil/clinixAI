@@ -177,21 +177,6 @@ class _PatientHistoryScreenState extends State<PatientHistoryScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                TextField(
-                  controller: _searchController,
-                  onChanged: _filterSearch,
-                  decoration: InputDecoration(
-                    hintText: 'Search by name, ID or disease...',
-                    hintStyle: TextStyle(color: CliniColor.onSurfaceVariant.withOpacity(0.6)),
-                    prefixIcon: const Icon(Icons.search, color: CliniColor.onSurfaceVariant),
-                    filled: true,
-                    fillColor: CliniColor.surfaceContainerLow,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
                 SizedBox(
                   height: 40,
                   child: ListView(

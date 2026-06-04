@@ -257,12 +257,36 @@ class AlertCard extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildAIAssessment(alert.assessment),
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(child: ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF004976), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16)), child: const Text('View Case'))),
-                      const SizedBox(width: 12),
-                      Expanded(child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)), child: const Text('Mark Attended'))),
-                    ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        try {
+                          final prefs = await SharedPreferences.getInstance();
+                          final token = prefs.getString('token');
+                          await dioClient.post(
+                            '/doctor/alert/${alert.id}/resolve',
+                            options: Options(headers: {'Authorization': 'Bearer $token'}),
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Marked as attended. Moved to History Log.')),
+                            );
+                            // Refresh alerts or pop
+                            // Here we just let the parent refresh or pop. For simplicity, we just pop.
+                            Navigator.pop(context);
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        }
+                      },
+                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                      child: const Text('Mark Attended'),
+                    ),
                   )
                 ],
               ),

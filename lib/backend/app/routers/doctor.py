@@ -24,7 +24,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from google.api_core.exceptions import FailedPrecondition
 from typing import Optional, List
 
-from app.firebase import get_doc, set_doc, query_collection, add_doc, get_firestore, COLLECTION, send_push
+from app.firebase import get_doc, set_doc, update_doc, query_collection, add_doc, get_firestore, COLLECTION, send_push
 from app.models.schemas import (
     DoctorProfile, DoctorReviewRequest,
     AppointmentStatus, ConsultationStatus,
@@ -137,12 +137,24 @@ async def resolve_alert(alert_id: str, notes: str = "",
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
     now = datetime.now(timezone.utc).isoformat()
-    set_doc(COLLECTION["alerts"], alert_id, {
+    update_doc(COLLECTION["alerts"], alert_id, {
         "is_resolved":  True,
         "resolved_by":  current_user.uid,
         "resolve_notes": notes,
         "resolved_at":  now,
     })
+    
+    # Update consultation status to REVIEWED so it shows up in history
+    consultation_id = alert.get("consultation_id")
+    if consultation_id:
+        c = get_doc(COLLECTION["consultations"], consultation_id)
+        if c:
+            update_doc(COLLECTION["consultations"], consultation_id, {
+                "status": ConsultationStatus.REVIEWED,
+                "doctor_uid": current_user.uid,
+                "updated_at": now,
+            })
+            
     return {"success": True, "alert_id": alert_id}
 
 

@@ -134,7 +134,6 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSearchSection(),
                   _buildMainGrid(),
                 ],
               ),
@@ -323,18 +322,7 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
   }
 
   Widget _buildSearchSection() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 40),
-      constraints: const BoxConstraints(maxWidth: 600),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search patients, records...',
-          prefixIcon: const Icon(Icons.search),
-          filled: true, fillColor: surfaceContainerLow,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-        ),
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildAppointmentHeader() {

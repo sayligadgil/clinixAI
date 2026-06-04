@@ -29,10 +29,18 @@ def generate_prescription_pdf(data: dict) -> bytes:
     p.drawString(1*inch, height - 3*inch, "Medications:")
     p.setFont("Helvetica", 11)
     y = height - 3.3*inch
-    for med in data.get('medications', []):
-        med_str = f"• {med.get('name')} - {med.get('dosage')} ({med.get('frequency')}) for {med.get('duration_days')} days"
-        p.drawString(1.2*inch, y, med_str)
-        y -= 0.2*inch
+    
+    medications = data.get('medications', [])
+    if not medications:
+        p.setFillColorRGB(0.8, 0, 0) # Red color
+        p.drawString(1.2*inch, y, "⚠️ REQUIRES IMMEDIATE DOCTOR REVIEW.")
+        p.drawString(1.2*inch, y - 0.2*inch, "Automated prescription withheld for safety.")
+        p.setFillColorRGB(0, 0, 0) # Reset color
+    else:
+        for med in medications:
+            med_str = f"• {med.get('name')} - {med.get('dosage')} ({med.get('frequency')}) for {med.get('duration_days')} days"
+            p.drawString(1.2*inch, y, med_str)
+            y -= 0.2*inch
 
     # Footer Disclaimer
     p.setFont("Helvetica-Oblique", 10)

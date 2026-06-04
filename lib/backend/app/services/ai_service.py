@@ -244,7 +244,11 @@ async def create_prescription(
 
     # Map risk level dynamically
     risk_lvl = RiskLevel.LOW
-    if c.get("requires_alert"):
+    confidence = c.get("confidence_score", 1.0)
+    
+    if confidence < 0.5:
+        risk_lvl = RiskLevel.HIGH  # Force high risk to withhold prescription for low confidence cases
+    elif c.get("requires_alert"):
         risk_lvl = RiskLevel.HIGH if c.get("severity", 5) >= 8 else RiskLevel.MEDIUM
 
     # Map symptoms dynamically — stored as selected_symptoms (list of strings)
