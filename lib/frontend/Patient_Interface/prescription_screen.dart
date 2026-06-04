@@ -191,12 +191,34 @@ class PrescriptionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // 🔹 DYNAMIC MAPPING OF DATABASE RULES
-                    ...consultation.medications.map((med) => _MedTile(
-                      title: "${med.name} (${med.dosage})",
-                      desc: "${med.frequency} for ${med.duration}",
-                      qty: med.qty,
-                    )),
+                    // 🔹 DYNAMIC MAPPING OF DATABASE RULES OR WARNING
+                    if (consultation.medications.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.warning_amber_rounded, color: Colors.red),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Requires immediate doctor review. Automated prescription withheld for safety.",
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ...consultation.medications.map((med) => _MedTile(
+                        title: "${med.name} (${med.dosage})",
+                        desc: "${med.frequency} for ${med.duration}",
+                        qty: med.qty,
+                      )),
                   ],
                 ),
               ),
@@ -326,6 +348,7 @@ class PrescriptionScreen extends StatelessWidget {
 
   static Widget _card(Widget child) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,

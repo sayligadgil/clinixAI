@@ -123,38 +123,80 @@ async def get_optional_user(res: HTTPAuthorizationCredentials = Depends(security
 @router.post("/register/doctor", response_model=AuthResponse)
 async def register_doctor(data: DoctorRegistration):
     try:
-        user = firebase_auth.create_user(
-            email=data.email,
-            password=data.password,
-            display_name=data.full_name
-        )
+        existing_doctors = firebase_helper.query_documents('doctors', [('full_name', '==', data.full_name)])
+        
+        if existing_doctors:
+            # Prioritize the seeded doctor (id starts with 'doc_')
+            existing_doc = next((d for d in existing_doctors if str(d.get('id', d.get('uid'))).startswith('doc_')), existing_doctors[0])
+            existing_uid = existing_doc.get('id', existing_doc.get('uid'))
+            
+            try:
+                user = firebase_auth.create_user(
+                    uid=existing_uid,
+                    email=data.email,
+                    password=data.password,
+                    display_name=data.full_name
+                )
+            except firebase_auth.UidAlreadyExistsError:
+                try:
+                    user = firebase_auth.get_user(existing_uid)
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail=f"Failed to get existing auth user: {e}")
+            except firebase_auth.EmailAlreadyExistsError:
+                try:
+                    user = firebase_auth.get_user_by_email(data.email)
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail=f"Failed to get existing auth user by email: {e}")
+            
+            doctor_data = existing_doc
+            doctor_data.update({
+                'email': data.email,
+                'license': data.medical_license,
+                'hospital_affiliation': data.hospital_id,
+                'specialization': data.specialization,
+                'phone': data.phone,
+                'role': 'doctor'
+            })
+            if 'id' in doctor_data: del doctor_data['id']
+            firebase_helper.update_document('doctors', existing_uid, doctor_data)
+            uid_to_use = existing_uid
+        else:
+            try:
+                user = firebase_auth.create_user(
+                    email=data.email,
+                    password=data.password,
+                    display_name=data.full_name
+                )
+            except firebase_auth.EmailAlreadyExistsError:
+                user = firebase_auth.get_user_by_email(data.email)
+                
+            uid_to_use = user.uid
+            doctor_data = {
+                'name': data.full_name,
+                'full_name': data.full_name,
+                'email': data.email,
+                'license': data.medical_license,
+                'hospital_affiliation': data.hospital_id,
+                'specialization': data.specialization,
+                'phone': data.phone,
+                'role': 'doctor',
+                'created_at': firestore.SERVER_TIMESTAMP,
+                'uid': uid_to_use
+            }
+            firebase_helper.create_document('doctors', uid_to_use, doctor_data)
 
         # 🔹 Set custom claims so the role is embedded in the token
-        firebase_auth.set_custom_user_claims(user.uid, {
+        firebase_auth.set_custom_user_claims(uid_to_use, {
             "role": "doctor",
             "hospital_id": data.hospital_id
         })
 
-        doctor_data = {
-            'name': data.full_name,
-            'full_name': data.full_name,
-            'email': data.email,
-            'license': data.medical_license,
-            'hospital_affiliation': data.hospital_id,
-            'specialization': data.specialization,
-            'phone': data.phone,
-            'role': 'doctor',
-            'created_at': firestore.SERVER_TIMESTAMP
-        }
-
-        firebase_helper.create_document('doctors', user.uid, doctor_data)
-
         # 🔹 Handle potential bytes output from create_custom_token
-        token_res = firebase_auth.create_custom_token(user.uid)
+        token_res = firebase_auth.create_custom_token(uid_to_use)
         token = token_res.decode('utf-8') if isinstance(token_res, bytes) else token_res
 
         return AuthResponse(
-            uid=user.uid, email=data.email, role=UserRole.DOCTOR,
+            uid=uid_to_use, email=data.email, role=UserRole.DOCTOR,
             token=token, full_name=data.full_name, hospital_id=data.hospital_id
         )
     except Exception as e:

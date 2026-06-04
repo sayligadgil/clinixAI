@@ -229,6 +229,7 @@ class FirebaseHelper:
 # Mapping all names expected by patient.py and other routers
 get_doc = FirebaseHelper.get_document
 set_doc = FirebaseHelper.create_document
+update_doc = FirebaseHelper.update_document
 query_collection = FirebaseHelper.query_documents
 get_firestore = get_db  # provides the db instance
 
