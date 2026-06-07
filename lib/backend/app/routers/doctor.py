@@ -508,6 +508,7 @@ async def get_doctor_schedule(
 async def get_doctor_consultations_query(
     hospital_id: Optional[str] = None,
     status: Optional[str] = None,
+    is_alert: Optional[str] = None,
     current_user: CurrentUser = Depends(require_doctor)
 ):
     """
@@ -526,6 +527,12 @@ async def get_doctor_consultations_query(
         filters=filters,
         order_by="created_at", limit=100
     )
+    
+    if is_alert is not None:
+        if is_alert.lower() == 'true':
+            consultations = [c for c in consultations if c.get("requires_alert") == True]
+        elif is_alert.lower() == 'false':
+            consultations = [c for c in consultations if c.get("requires_alert") != True]
     
     results = []
     for c in consultations:

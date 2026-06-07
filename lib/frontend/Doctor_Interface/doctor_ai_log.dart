@@ -36,7 +36,9 @@ class DiseaseClassification {
   factory DiseaseClassification.fromJson(Map<String, dynamic> json) {
     return DiseaseClassification(
       label: json['label'] ?? 'Unknown',
-      confidence: (json['confidence'] ?? 0.0).toDouble(),
+      confidence: ((json['confidence'] ?? json['confidence_score'] ?? 0.0) > 1.0)
+          ? ((json['confidence'] ?? json['confidence_score'] ?? 0.0) / 100.0)
+          : ((json['confidence'] ?? json['confidence_score'] ?? 0.0) as num).toDouble(),
       notes: json['notes'] ?? '',
     );
   }
@@ -138,7 +140,7 @@ class _PrescriptionLogPageState extends State<PrescriptionLogPage> {
 
   Future<List<ConsultationResponse>> fetchConsultations() async {
     try {
-      final response = await dioClient.get('/doctor/consultations');
+      final response = await dioClient.get('/doctor/consultations', queryParameters: {'is_alert': 'false'});
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
@@ -364,9 +366,9 @@ class PrescriptionCard extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 const Text('CONFIDENCE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
                 Row(children: [
-                  Text('${(confidence * 100).toInt()}%', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: accentColor)),
+                  Text('${(confidence > 1 ? confidence : confidence * 100).toInt()}%', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: accentColor)),
                   const SizedBox(width: 8),
-                  SizedBox(width: 50, child: LinearProgressIndicator(value: confidence, backgroundColor: Colors.white, color: accentColor, minHeight: 6)),
+                  SizedBox(width: 50, child: LinearProgressIndicator(value: confidence > 1 ? confidence / 100 : confidence, backgroundColor: Colors.white, color: accentColor, minHeight: 6)),
                 ]),
               ])
             ],

@@ -6,7 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:clinixai/core/api_client.dart';
 import 'package:dio/dio.dart';
 import 'dart:typed_data';
-import 'dart:html' as html show Blob, AnchorElement, Url;
+import 'package:universal_html/html.dart' as html show Blob, AnchorElement, Url;
+import 'dart:io' as io;
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 
 class PrescriptionScreen extends StatelessWidget {
   // 🔹 DATA REQUIREMENT
@@ -292,6 +295,18 @@ class PrescriptionScreen extends StatelessWidget {
                           backgroundColor: Color(0xFF004976),
                         ),
                       );
+                    } else {
+                      final bytes = Uint8List.fromList(response.data);
+                      final dir = await getApplicationDocumentsDirectory();
+                      final file = io.File('${dir.path}/clinix_prescription_${rxId.substring(0, 8)}.pdf');
+                      await file.writeAsBytes(bytes);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("✅ PDF saved locally! Opening..."),
+                          backgroundColor: Color(0xFF004976),
+                        ),
+                      );
+                      await OpenFilex.open(file.path);
                     }
                   } catch (e) {
                     debugPrint("PDF download error: $e");

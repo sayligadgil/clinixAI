@@ -36,7 +36,9 @@ class CarePathData {
                  json['predicted_illness']?.toString() ?? 
                  json['likely_condition']?.toString() ?? 
                  'Unknown',
-      confidence: parseDouble(json['confidence'] ?? json['confidence_score']),
+      confidence: ((json['confidence'] ?? json['confidence_score'] ?? 0.0) > 1.0)
+          ? ((json['confidence'] ?? json['confidence_score'] ?? 0.0) / 100.0)
+          : parseDouble(json['confidence'] ?? json['confidence_score']),
       analysisDetail: json['analysis_detail']?.toString() ?? 
                       json['analysis_notes']?.toString() ?? 
                       json['reasoning']?.toString() ?? 
