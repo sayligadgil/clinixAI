@@ -204,7 +204,7 @@ async def verify_and_generate(req: PaymentVerifyRequest,
 
 @router.get("/prescription/{prescription_id}")
 async def get_prescription(prescription_id: str,
-                            current_user: CurrentUser = Depends(require_patient)):
+                            current_user: CurrentUser = Depends(get_current_user_any)):
     doc = get_doc(COLLECTION["prescriptions"], prescription_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Prescription not found.")
@@ -215,7 +215,7 @@ async def get_prescription(prescription_id: str,
 
 @router.get("/prescription/{prescription_id}/pdf")
 async def download_prescription_pdf(prescription_id: str,
-                                     current_user: CurrentUser = Depends(require_patient)):
+                                     current_user: CurrentUser = Depends(get_current_user_any)):
     """Returns the prescription as a downloadable PDF."""
     doc = get_doc(COLLECTION["prescriptions"], prescription_id)
     if not doc:

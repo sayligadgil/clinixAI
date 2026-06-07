@@ -32,8 +32,10 @@ class ClinixAlert {
       id: json['alert_id'] ?? '',
       patientName: json['patient_name'] ?? 'Unknown Patient',
       timestamp: json['received_at'] ?? 'Just now',
-      confidence: (json['confidence'] ?? 0.0).toDouble(),
-      requiresVerification: (json['confidence'] ?? 1.0) < 0.60, // 🔹 Triggered by your 6-stage pipeline
+      confidence: ((json['confidence'] ?? json['confidence_score'] ?? 0.0) > 1.0) 
+          ? ((json['confidence'] ?? json['confidence_score'] ?? 0.0) / 100.0) 
+          : ((json['confidence'] ?? json['confidence_score'] ?? 0.0) as num).toDouble(),
+      requiresVerification: ((json['confidence'] ?? json['confidence_score'] ?? 1.0) as num).toDouble() < 0.60,
       symptoms: List<String>.from(json['symptoms'] ?? []),
       assessment: json['ai_assessment'] ?? 'No assessment available.',
       riskScore: (json['risk_score'] ?? 0.0).toDouble(),
@@ -233,7 +235,7 @@ class AlertCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(color: const Color(0xFFFFDAD6), borderRadius: BorderRadius.circular(12)),
                             child: Text(
-                              'Confidence: ${(alert.confidence * 100).toStringAsFixed(0)}%',
+                              'Confidence: ${(alert.confidence > 1 ? alert.confidence : alert.confidence * 100).toStringAsFixed(0)}%',
                               style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF93000A)),
                             ),
                           ),

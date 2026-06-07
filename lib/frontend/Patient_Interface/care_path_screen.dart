@@ -249,7 +249,7 @@ class CarePathScreen extends StatelessWidget {
                   specialization: analysisResult.specialization ?? "General Physician",
                   hospitalName: analysisResult.hospitalName,
                   hospitalLocation: "Specialist Wing",
-                  appointmentTime: "Tomorrow, 10:30 AM",
+                  appointmentTime: "Tomorrow, ${[9, 11, 2, 4][DateTime.now().minute % 4]}:00 ${DateTime.now().minute % 4 > 1 ? 'PM' : 'AM'}",
                   patientSymptoms: selectedSymptoms,
                   details: analysisResult.analysisDetail,
                   doctorUid: analysisResult.doctorUid,

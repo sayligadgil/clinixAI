@@ -106,7 +106,7 @@ class _PatientHistoryScreenState extends State<PatientHistoryScreen> {
         '/doctor/consultations',
         queryParameters: {
           'hospital_id': hospitalId,
-          'status': 'completed'
+          'status': 'reviewed'
         },
       );
 
